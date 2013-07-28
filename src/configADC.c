@@ -394,19 +394,19 @@ void ADC_StopSampling(void)
 ************************************************************/
 void ADC_SwapBuffer(void)
 {
-	adc_buffer_to_send = SAMPLES_MEMORY;
-	adc_number_of_samples_to_send = samples_memory_index;
+	adc_buffer_to_send = AR_buffer;
+	adc_number_of_samples_to_send = AR_bufferIndex;
 	//adc_send_continuous_samples = 1;
 	
 	adc_sample_buffer_full = 1;
 	adc_send_continuous_samples = 1;
-	samples_memory_index=0;
+	AR_bufferIndex=0;
 		
-	if(SAMPLES_MEMORY == sample_buffer_1){
-		SAMPLES_MEMORY = sample_buffer_2;
+	if(AR_buffer == memSamplesBuffer1){
+		AR_buffer = memSamplesBuffer2;
 	//	printf("samplebuffer2\n");
 	}else{
-		SAMPLES_MEMORY = sample_buffer_1;
+		AR_buffer = memSamplesBuffer1;
 	//	printf("samplebuffer1\n");
 	}
 	
@@ -430,18 +430,11 @@ void ADC_SwapBuffer(void)
 ************************************************************/
 void ADC_StartSampling(unsigned int number_samples, unsigned int sample_period, char continuous_sampling)
 {
-	samples_memory_index=0;
-	adc_number_of_samples = number_samples;
+	AR_bufferIndex=0;
+	AR_totalSamples = number_samples;
 	
-	adc_continuous_sampling = continuous_sampling;
+	AR_continuousSampling = continuous_sampling;
 	
-	if(SAMPLES_MEMORY == sample_buffer_1){
-		SAMPLES_MEMORY = sample_buffer_2;
-	//	printf("samplebuffer2\n");
-	}else{
-		SAMPLES_MEMORY = sample_buffer_1;
-	//	printf("samplebuffer1\n");
-	}
 //	printf("StartSampling!\n");
 	ADC_init(sample_period);
 	
@@ -533,52 +526,35 @@ void IRQ_ADC_SampleDone(int sig_int)
 	 float a1,a2,a3;
 	
 	//for(i=0; i<4;i++);
+	
+	// Waits for sample in the SPORT buffer
 	while ((*pSPCTL3 & DXS1_A)==0);
+	// Reads sample from SPORT buffer
 	sample = *pRXSP3A;
-	k = (float) sample;
-//	k= (float) *pRXSP4A;
-	//*pSPCTL4 =0;
-//	for(i=0; i<10;i++);
+
 	// Disables the SPORT interface.
-
 	*pSPCTL3 = 0;
-   // SRU(LOW, DAI_PB17_I);
 
-	a1 = ((k>>16)&0xffff)*2.5/65536;
-	a2 = (k&0xffff)*2.5/65536;
 
+	
+	// Saves to current Acquisition Run samples buffer memory
+	AR_buffer[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE] = sample;
+	
 //	SAMPLES_MEMORY[samples_memory_index%MAXSAMPLES] = sample;
-	SAMPLES_MEMORY[samples_memory_index%MAXSAMPLES] = sample;
 
-	samples_memory_index++;
+	AR_bufferIndex++;
 	
 	// If the expected number of samples has been reached.
-	if(samples_memory_index==adc_number_of_samples){
+	if(AR_bufferIndex==AR_totalSamples){
 	//	ADC_StopSampling();
 		ADC_SwapBuffer();
+		if(AR_continuousSampling == 1){
+			
+			ADC_StopSampling();
+		}
 		
 	}
-	//i= *pRXSP4A;
-//	printf("Int 1 : %d \n", i);
-	//if(k!=0xffffffff){
-//	for(i=0; i<10;i++);
 
-	//*pSPCTL4 = 0;
-	//*pSPCTL4 = (FSR | ICLK | CKRE | SLEN32 | SPEN_A );
-
-	//*pSPCTL4 = (FSR | ICLK | CKRE | SLEN32 | 0 );
-//	for(i=0; i<10;i++);
-	//}
-	
-	// Disables the SPORT interface.
-	//*pSPCTL3 = (FSR | 0 | IFS | 0 | 0 | SLEN32| 0 | 0 );
-	
-	 //   SRU(HIGH, DAI_PB20_I); //#!
-
-	 //#! Must save the received sample into memory!
-	 
-//	*pSPCTL4 = (FSR | ICLK | CKRE | SLEN32 | 0 );
-//	printf("SP3. %x ADC1 %f %x , ADC2 %f %x\n",sample, a1, (k>>16)&0xffff,a2,k&0xffff);
 	
 }
 

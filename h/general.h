@@ -30,17 +30,21 @@
 #include <sysreg.h>
 #include <signal.h>
 #include <sru.h>
+#include <math.h>
+
 
 //#include <initPLL.h> 
 
 
 //#include <services/int/adi_int.h>
-
+#include "processSignal.h"
 #include "configADC.h"
 
 #include "configDDS.h"
 #include "configUSB.h"
 #include "processPackets.h"
+#include "global_variables.h"
+
 
 // Signals
 

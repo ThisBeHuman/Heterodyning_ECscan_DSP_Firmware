@@ -3,7 +3,7 @@
  *****************************************************************************/
 
 #define LED6 DAI_PB16_I
-#include ".\h\general.h" 
+#include "./h/general.h" 
 
 /////////////////////////////////////////////////
 // 			GLOBALS
@@ -109,7 +109,7 @@ void main( void )
 	unsigned char w2 = 0x38;//0x38;
 	unsigned char w1 = 0x0E>>0;//0x0E;
 	unsigned char w0 = 0x09; // phase, power down, REF Multiplier
-	
+	float somefloat = 300;
 	unsigned short packetSize;
 	
 	char memaux[] = {0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09};
@@ -135,7 +135,7 @@ void main( void )
 	//initPLL_SDRAM();
 	//InitPLL_SDRAM();
 	
-	
+	somefloat = sqrtf(somefloat);
 	
 	//SRU(HIGH,PIN_SCALE_b0);	
 	//SRU(HIGH,PIN_SCALE_b1);	
@@ -292,7 +292,11 @@ void main( void )
 		
 		if(adc_send_continuous_samples){
 
-			USB_sendADCData(adc_number_of_samples_to_send,adc_buffer_to_send);
+			DSP_ModeIQ_AmplitudePhase(adc_number_of_samples_to_send,adc_buffer_to_send,
+					&memDSPBufferAmplitude[0],&memDSPBufferPhase[0]);
+			
+			USB_sendADCData(adc_number_of_samples_to_send,(unsigned short*)&memDSPBufferAmplitude[0]);				
+			//USB_sendADCData(adc_number_of_samples_to_send,adc_buffer_to_send);
 
 			adc_send_continuous_samples = 0;	
 		}

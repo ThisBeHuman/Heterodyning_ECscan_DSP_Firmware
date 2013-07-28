@@ -465,7 +465,7 @@ int USB_sendADCData(int buffer_size, unsigned short * buffer)
 	
 	 //printf("send adc data! %d\n",buffer);
 	//k = adc_number_of_samples*4;
-	for (index = 0; index< adc_number_of_samples ; index++){
+	for (index = 0; index< adc_number_of_samples_to_send ; index++){
 		for(k = 0; k < 4; k++){
 	
 			// Poll for space available

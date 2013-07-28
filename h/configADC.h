@@ -105,6 +105,9 @@
 extern unsigned int * SAMPLES_MEMORY;
 
 
+// Global Acquired Samples Buffers
+
+
 
 
 // ADC Global Variables
