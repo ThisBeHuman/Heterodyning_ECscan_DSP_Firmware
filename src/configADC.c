@@ -394,14 +394,13 @@ void ADC_StopSampling(void)
 ************************************************************/
 void ADC_SwapBuffer(void)
 {
-	adc_buffer_to_send = AR_buffer;
+	adc_buffer_to_send = (unsigned int*)AR_bufferChA;//memProcessedBufferChA;//
 	adc_number_of_samples_to_send = AR_bufferIndex;
-	//adc_send_continuous_samples = 1;
+	adc_send_continuous_samples = 1;
 	
 	adc_sample_buffer_full = 1;
-	adc_send_continuous_samples = 1;
+//#!	adc_send_continuous_samples = 1;
 	AR_bufferIndex=0;
-		
 	if(AR_buffer == memSamplesBuffer1){
 		AR_buffer = memSamplesBuffer2;
 	//	printf("samplebuffer2\n");
@@ -540,6 +539,9 @@ void IRQ_ADC_SampleDone(int sig_int)
 	// Saves to current Acquisition Run samples buffer memory
 	AR_buffer[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE] = sample;
 	
+	AR_bufferChA[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE] = (sample&0xffff)*2.5/65536;
+	AR_bufferChB[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE] = ((sample>>16)&0xffff)*2.5/65536;
+	
 //	SAMPLES_MEMORY[samples_memory_index%MAXSAMPLES] = sample;
 
 	AR_bufferIndex++;
@@ -547,6 +549,11 @@ void IRQ_ADC_SampleDone(int sig_int)
 	// If the expected number of samples has been reached.
 	if(AR_bufferIndex==AR_totalSamples){
 	//	ADC_StopSampling();
+	
+	//	interrupt(SIG_P0,IRQ_FIR);
+
+	Init_FIR();
+	
 		ADC_SwapBuffer();
 		if(AR_continuousSampling == 1){
 			

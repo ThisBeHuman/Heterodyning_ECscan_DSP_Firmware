@@ -21,6 +21,9 @@
 unsigned int AR_totalSamples;
 unsigned int AR_bufferIndex=0;
 unsigned int *AR_buffer=memSamplesBuffer1;
+float *AR_bufferChA=memSamplesBufferChA;
+float *AR_bufferChB=memSamplesBufferChB;
+
 unsigned char AR_continuousSampling=0;
 
 
@@ -35,10 +38,17 @@ int CAL_chB_calibration=0x6D09;
 unsigned int memSamplesBuffer1[MAX_SAMPLES_BUFFER_SIZE];
 unsigned int memSamplesBuffer2[MAX_SAMPLES_BUFFER_SIZE];
 
-int memSamplesBufferChA[MAX_SAMPLES_BUFFER_SIZE];
-int memSamplesBufferChB[MAX_SAMPLES_BUFFER_SIZE];
+float memSamplesBufferChA[MAX_SAMPLES_BUFFER_SIZE];
+float memSamplesBufferChB[MAX_SAMPLES_BUFFER_SIZE];
+
+float memFIRcoeff[] = { 
+	#include "fir_coeff.dat"
+	};
+
+float memProcessedBufferChA[MAX_SAMPLES_BUFFER_SIZE];
+float memProcessedBufferChB[MAX_SAMPLES_BUFFER_SIZE];
 
 
 
-float memDSPBufferAmplitude[MAX_SAMPLES_BUFFER_SIZE];
-float memDSPBufferPhase[MAX_SAMPLES_BUFFER_SIZE];
+//float memDSPBufferAmplitude[MAX_SAMPLES_BUFFER_SIZE];
+//float memDSPBufferPhase[MAX_SAMPLES_BUFFER_SIZE];

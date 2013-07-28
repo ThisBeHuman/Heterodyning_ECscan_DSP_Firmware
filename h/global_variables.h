@@ -29,6 +29,10 @@
 extern unsigned int AR_totalSamples;
 extern unsigned int AR_bufferIndex;
 extern unsigned int *AR_buffer;
+extern float *AR_bufferChA;
+extern float *AR_bufferChB;
+
+
 extern unsigned char AR_continuousSampling;
 
 extern unsigned int * current_memSamplesBuffer;
@@ -37,9 +41,12 @@ extern unsigned int current_memSamplesBuffer_index ;
 extern unsigned int memSamplesBuffer1[MAX_SAMPLES_BUFFER_SIZE];
 extern unsigned int memSamplesBuffer2[MAX_SAMPLES_BUFFER_SIZE];
 
-extern int memSamplesBufferChA[MAX_SAMPLES_BUFFER_SIZE];
-extern int memSamplesBufferChB[MAX_SAMPLES_BUFFER_SIZE];
+extern float memSamplesBufferChA[MAX_SAMPLES_BUFFER_SIZE];
+extern float memSamplesBufferChB[MAX_SAMPLES_BUFFER_SIZE];
 
+extern float memProcessedBufferChA[MAX_SAMPLES_BUFFER_SIZE];
+extern float memProcessedBufferChB[MAX_SAMPLES_BUFFER_SIZE];
+extern float memFIRcoeff[];
 
 
 // Digital Signal Processing

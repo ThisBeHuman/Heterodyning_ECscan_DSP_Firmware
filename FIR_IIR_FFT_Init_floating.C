@@ -64,8 +64,8 @@ void Init_FIR()
 
 	//Mapping the FIR DMA interrupt
 	temp=*pPICR0;
-	temp&=~(P4I0|P4I1|P4I2|P4I3|P4I4);
-	temp|=P4I0|P4I1|P4I3|P4I4;
+	temp&=~(P0I0|P0I1|P0I2|P0I3|P0I4);
+	temp|=P0I0|P0I1|P0I3|P0I4;
 	*pPICR0=temp;
 
 	//Selecting the FIR Accelerator

@@ -200,7 +200,7 @@ void main( void )
 //	interrupt(SIG_P0,dai_Interrupt);
 //	SRU (DAI_PB19_O, DAI_INT_22_I); 
 
-
+	interrupt(SIG_P5,IRQ_FIR);
 
 //	initTimer0();	
 	while(1){
@@ -292,11 +292,13 @@ void main( void )
 		
 		if(adc_send_continuous_samples){
 
-			DSP_ModeIQ_AmplitudePhase(adc_number_of_samples_to_send,adc_buffer_to_send,
+	/*		DSP_ModeIQ_AmplitudePhase(adc_number_of_samples_to_send,adc_buffer_to_send,
 					&memDSPBufferAmplitude[0],&memDSPBufferPhase[0]);
 			
 			USB_sendADCData(adc_number_of_samples_to_send,(unsigned short*)&memDSPBufferAmplitude[0]);				
-			//USB_sendADCData(adc_number_of_samples_to_send,adc_buffer_to_send);
+	*/
+					for(i=0;i<1000;i++);	
+			USB_sendADCData(adc_number_of_samples_to_send,adc_buffer_to_send);
 
 			adc_send_continuous_samples = 0;	
 		}
