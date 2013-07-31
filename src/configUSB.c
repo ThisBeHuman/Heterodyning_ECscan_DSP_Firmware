@@ -25,8 +25,6 @@
 /**************************************************************
 			LOCAL USB GLOBAL VARIABLES
 ***************************************************************/
-unsigned char USB_PAYLOAD_BUFFER[USB_MAX_PAYLOAD_SIZE];
-unsigned char USB_ACK_BUFFER[USB_MAX_ACK_SIZE];
 
 
 
@@ -191,6 +189,8 @@ void USB_init(void)
 	// IC5 Bus Idle Cycle
 	// RHC5 Read Hold Cycle at the end of Read Access
 	// FLSH - buffer holds data? #!
+	USB_purge();
+
 	
 }
 
@@ -344,6 +344,33 @@ bool USB_pollSpaceAvailable(void)
 	return TRUE;
 }
 
+
+
+
+/************************************************************
+	Function:	int USB_purge (void)
+	Argument:	
+	
+	Return:		TRUE if read all the bytes
+				USB_ERROR_FLAG if there was an error
+			
+	Description:	
+			Continuously reads the USB buffer to clear all data.
+	Action:		
+	
+************************************************************/
+int USB_purge(void)
+{
+
+	while( USB_pollDataAvailable()){
+		USB_access(USB_DATA_PIPE, USB_READ, USB_NULL);	
+	}
+	
+	return TRUE;	
+}
+
+
+
 /************************************************************
 	Function:	short USB_readStartOfPacket ()
 	Argument:		
@@ -458,7 +485,7 @@ int USB_readPayload(unsigned short usb_size, unsigned char * payload_buffer)
 	Description: Writes a buffer to be sent through USB.
 	Extra:			
 ************************************************************/
-int USB_sendADCData(int buffer_size, unsigned short * buffer)
+int USB_sendADCData(int buffer_size, unsigned int * buffer)
 {
 	int temp, index;	
 	int k;

@@ -75,6 +75,12 @@ int USB_processPayload(unsigned short payload_size, unsigned char * payload_buff
 			
 			processADCStopSampling(payload_size, payload_buffer);
 			break;
+		case USB_MSG_CALIBRATE:
+//			printf("payload size:%d\n",payload_size);
+			if(payload_size != USB_MSG_CALIBRATE_SIZE) return USB_WRONG_CMD_SIZE;
+			
+			processCalibrate(payload_size, payload_buffer);
+			break;
 		default:
 			return USB_ERROR_FLAG;
 		
@@ -324,7 +330,50 @@ int processADCStopSampling(unsigned short msg_size, unsigned char * msg_buffer)
 
 
 /************************************************************
-	Function:	short process_sendAcknowledge (unsigned char header)
+	Function:	short processCalibrate (unsigned short msg_size, unsigned char * msg_buffer)
+	Argument:	unsigned short msg_size - Payload message size for confirmation
+ 				unsigned char * msg_buffer - Payload buffer with message to process
+	Return:		TRUE if message has been processed without errors.
+				USB_ERROR_FLAG if there was an error
+			
+			
+	Description: Starts an acquisition run that, when finished,
+		flags the calibration loop routine to update the calibration
+		variables.
+		
+	Extra:	
+			CAL_chA_calibration
+			CAL_chB_calibration
+			
+************************************************************/
+int processCalibrate(unsigned short msg_size, unsigned char * msg_buffer)
+{
+	int i;	
+	// Checks if this message corresponds to a Change Frequency command
+	if(msg_size != USB_MSG_CALIBRATE_SIZE 
+		&& msg_buffer[0] != USB_MSG_CALIBRATE) {
+			printf("error calibrate!\n");//#!
+			return USB_WRONG_CMD;
+	}
+	 
+	// Reset calibration variables
+	CAL_chA_calibration=0;
+	CAL_chB_calibration=0;
+	// #! 3 samples 10us, single acquisition
+	
+	ADC_StartSampling(1024, 10, 0);
+//	while(~AR_finishedFlag);
+	for(i=0;i<1;i++);
+	CAL_calibrateFlag = TRUE;
+	
+	process_sendAcknowledge(msg_buffer[0]);
+
+	return TRUE;
+}
+
+
+/************************************************************
+	Function:	int process_sendAcknowledge (unsigned char header)
 	Argument:	unsigned char header - Same header as received packet
 	Return:		TRUE if message has been processed without errors.
 				USB_ERROR_FLAG if there was an error
@@ -338,17 +387,66 @@ int processADCStopSampling(unsigned short msg_size, unsigned char * msg_buffer)
 int process_sendAcknowledge(unsigned char header)
 {
 	unsigned short acknowledge_packet_size=1;
-	unsigned short acknowledge_payload_size=4;
+	unsigned short acknowledge_payload_size=6;
 	
 	USB_ACK_BUFFER[0] = USB_START_OF_PACKET_TO_HOST;
-	USB_ACK_BUFFER[1] = (acknowledge_packet_size>>8&0xff);
-	USB_ACK_BUFFER[2] = acknowledge_packet_size&0xff;
-	USB_ACK_BUFFER[3] = header;
+	USB_ACK_BUFFER[1] = (acknowledge_packet_size>>24&0xff);
+	USB_ACK_BUFFER[2] = (acknowledge_packet_size>>16&0xff);
+	USB_ACK_BUFFER[3] = (acknowledge_packet_size>>8&0xff);
+	USB_ACK_BUFFER[4] = acknowledge_packet_size&0xff;
+	USB_ACK_BUFFER[5] = header;
 	
 	printf("sent acknowledge: %x\n",header);
 	if(USB_writeBuffer(acknowledge_payload_size, &USB_ACK_BUFFER[0]) == USB_ERROR_FLAG){
 		return USB_ERROR_FLAG;	
 	} 
+	return TRUE;
+}
+
+
+/************************************************************
+	Function:	int process_sendSampleData (unsigned char header)
+	Argument:	unsigned char header - Same header as received packet
+	Return:		TRUE if message has been processed without errors.
+				USB_ERROR_FLAG if there was an error
+			
+			
+	Description: Stops an ocurring ADC Sampling and sending to USB.
+		
+	Extra:	
+
+************************************************************/
+int process_sendSampleData(unsigned short sample_size, float * bufferChA, float * bufferChB)
+{
+	unsigned int packet_size;
+	unsigned short sendSampleData_header_size=6;
+	
+	float whatfloat[]={0,1,2,3,4};
+	packet_size = sizeof(float);
+	packet_size = 1 + sample_size*2*sizeof(float);
+	
+	USB_ACK_BUFFER[0] = USB_START_OF_PACKET_TO_HOST;
+	USB_ACK_BUFFER[1] = (sample_size>>24&0xff);
+	USB_ACK_BUFFER[2] = (sample_size>>16&0xff);
+	USB_ACK_BUFFER[3] = (sample_size>>8&0xff);
+	USB_ACK_BUFFER[4] = sample_size&0xff;
+	
+	USB_ACK_BUFFER[5] = PACKET_HDR_SENDSAMPLEDATA; // header
+	
+	
+	
+	if(USB_writeBuffer(sendSampleData_header_size, &USB_ACK_BUFFER[0]) == USB_ERROR_FLAG){
+		return USB_ERROR_FLAG;	
+	} 
+	if(USB_sendADCData(sample_size*sizeof(float), (unsigned char*)bufferChA) == USB_ERROR_FLAG){
+		printf("error sending channel A\n");
+		return USB_ERROR_FLAG;	
+	} 
+	if(USB_sendADCData(sample_size*sizeof(float), (unsigned char*)bufferChB) == USB_ERROR_FLAG){
+		printf("error sending channel B\n");
+		return USB_ERROR_FLAG;	
+	} 
+	
 	return TRUE;
 }
 

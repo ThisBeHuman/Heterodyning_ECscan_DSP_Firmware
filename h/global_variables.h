@@ -24,8 +24,12 @@
 
 
 #define MAX_SAMPLES_BUFFER_SIZE 8192
+#define USB_MAX_PAYLOAD_SIZE	300
+#define USB_MAX_ACK_SIZE	10
 
 // Acquisition Run
+extern bool AR_finishedFlag;
+extern bool AR_finishedFIR;
 extern unsigned int AR_totalSamples;
 extern unsigned int AR_bufferIndex;
 extern unsigned int *AR_buffer;
@@ -50,12 +54,15 @@ extern float memFIRcoeff[];
 
 
 // Digital Signal Processing
-extern int CAL_chA_calibration;
-extern int CAL_chB_calibration;
+extern float CAL_chA_calibration;
+extern float CAL_chB_calibration;
+extern bool CAL_calibrateFlag;
 
 extern float memDSPBufferAmplitude[MAX_SAMPLES_BUFFER_SIZE];
 extern float memDSPBufferPhase[MAX_SAMPLES_BUFFER_SIZE];
-
+extern bool DSP_processingFIR;
+extern unsigned char USB_PAYLOAD_BUFFER[USB_MAX_PAYLOAD_SIZE];
+extern unsigned char USB_ACK_BUFFER[USB_MAX_ACK_SIZE];
 
 #endif
 

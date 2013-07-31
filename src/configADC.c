@@ -366,17 +366,7 @@ void ADC_StopSampling(void)
 //		}
 		
 		
-/*		printf("Sample: %x\n%x\n%x\n%x\n%x\n%x\n",
-		SAMPLES_MEMORY[0],
-		SAMPLES_MEMORY[1],
-		SAMPLES_MEMORY[2],
-		SAMPLES_MEMORY[3],
-		SAMPLES_MEMORY[90],
-		SAMPLES_MEMORY[100]
-
 		
-		);
-*/
 	
 }
 
@@ -394,12 +384,8 @@ void ADC_StopSampling(void)
 ************************************************************/
 void ADC_SwapBuffer(void)
 {
-	adc_buffer_to_send = (unsigned int*)AR_bufferChA;//memProcessedBufferChA;//
-	adc_number_of_samples_to_send = AR_bufferIndex;
-	adc_send_continuous_samples = 1;
+
 	
-	adc_sample_buffer_full = 1;
-//#!	adc_send_continuous_samples = 1;
 	AR_bufferIndex=0;
 	if(AR_buffer == memSamplesBuffer1){
 		AR_buffer = memSamplesBuffer2;
@@ -411,6 +397,45 @@ void ADC_SwapBuffer(void)
 	
 }
 
+/************************************************************
+	Function:		ADC_FinishedAR()
+	Argument:		
+	Description:	Is called when an Acquisition Run finishes.
+		
+	Action:	
+		
+		
+************************************************************/
+void ADC_FinishedAR(void)
+{
+	adc_buffer_to_send = (unsigned int*)memProcessedBufferChA;//AR_bufferChA;//memSamplesBuffer1;//
+	adc_number_of_samples_to_send = AR_bufferIndex;
+//	adc_send_continuous_samples = 1;
+	
+	adc_sample_buffer_full = 1;
+//#!	adc_send_continuous_samples = 1;
+	
+	
+	if(AR_continuousSampling){
+		ADC_SwapBuffer();	
+		
+		SIG_LED1_ON;
+		Init_FIR(AR_bufferIndex);	
+		AR_finishedFlag = TRUE;
+		
+	}else{
+		ADC_StopSampling();
+		
+		SIG_LED1_ON;
+		Init_FIR(AR_bufferIndex);	
+	//	Init_FIR();	
+	//	Init_FIR();	
+		AR_finishedFlag = TRUE;
+
+	}
+
+	
+}
 
 
 /************************************************************
@@ -539,8 +564,8 @@ void IRQ_ADC_SampleDone(int sig_int)
 	// Saves to current Acquisition Run samples buffer memory
 	AR_buffer[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE] = sample;
 	
-	AR_bufferChA[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE] = (sample&0xffff)*2.5/65536;
-	AR_bufferChB[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE] = ((sample>>16)&0xffff)*2.5/65536;
+	AR_bufferChA[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE] = (sample&0xffff)*2.5/65536 - CAL_chA_calibration;
+	AR_bufferChB[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE] = ((sample>>16)&0xffff)*2.5/65536 - CAL_chB_calibration;
 	
 //	SAMPLES_MEMORY[samples_memory_index%MAXSAMPLES] = sample;
 
@@ -552,13 +577,9 @@ void IRQ_ADC_SampleDone(int sig_int)
 	
 	//	interrupt(SIG_P0,IRQ_FIR);
 
-	Init_FIR();
 	
-		ADC_SwapBuffer();
-		if(AR_continuousSampling == 1){
-			
-			ADC_StopSampling();
-		}
+	
+		ADC_FinishedAR();
 		
 	}
 

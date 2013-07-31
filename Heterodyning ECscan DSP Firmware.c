@@ -101,7 +101,7 @@ void main( void )
 	int j=0;
 	
 	int temp;
-	
+	int timeout;
 	char *aux_ptr;
 	int usbdata,usbdata2,usbdata3,usbdata4;
 	unsigned char w4 = 0x8E;// 0x8E;
@@ -149,6 +149,19 @@ void main( void )
 	//DDS_current_scale(DDS_CURRENT_100);
 //	initPLL_21489(8,4,3,false);
 	
+	// Signal INIT
+	SIG_ALIVE_EN;
+	SIG_RUNNING_EN;
+	SIG_HOST_EN;
+	SIG_ERROR_EN;
+	SIG_LED1_EN;
+	SIG_LED2_EN;
+	SIG_LED3_EN;
+	SIG_LED4_EN;
+	
+	
+	
+
 	InitPLL();
 	InitDDS_IO();
 
@@ -200,7 +213,7 @@ void main( void )
 //	interrupt(SIG_P0,dai_Interrupt);
 //	SRU (DAI_PB19_O, DAI_INT_22_I); 
 
-	interrupt(SIG_P5,IRQ_FIR);
+//	interrupt(SIG_P5,IRQ_FIR);
 
 //	initTimer0();	
 	while(1){
@@ -231,9 +244,11 @@ void main( void )
 			if(z==0){
 				z=1;
 				SIG_ALIVE_ON;
+				//SIG_LED2_OFF;
 			}else{
 				z=0;
 				SIG_ALIVE_OFF;
+			//	SIG_LED2_ON;
 			}
 					for(i=0;i<1000;i++);	
 
@@ -290,17 +305,32 @@ void main( void )
 		}	
 */
 		
-		if(adc_send_continuous_samples){
-
+		if(AR_finishedFlag){
+			SIG_LED1_OFF;
 	/*		DSP_ModeIQ_AmplitudePhase(adc_number_of_samples_to_send,adc_buffer_to_send,
 					&memDSPBufferAmplitude[0],&memDSPBufferPhase[0]);
 			
 			USB_sendADCData(adc_number_of_samples_to_send,(unsigned short*)&memDSPBufferAmplitude[0]);				
 	*/
-					for(i=0;i<1000;i++);	
-			USB_sendADCData(adc_number_of_samples_to_send,adc_buffer_to_send);
+//					for(i=0;i<1000;i++);
+			if(CAL_calibrateFlag){			
+				CAL_chA_calibration = (AR_bufferChA[0]+AR_bufferChA[1]+AR_bufferChA[2])/3;
+				CAL_chB_calibration = (AR_bufferChB[0]+AR_bufferChB[1]+AR_bufferChB[2])/3;
+				CAL_calibrateFlag = FALSE;
+			}else{
+				timeout = 100000;
+				while(DSP_processingFIR&&timeout--);
 
-			adc_send_continuous_samples = 0;	
+						
+	//			USB_sendADCData(adc_number_of_samples_to_send,(unsigned int*)memProcessedBufferChA);
+	//			USB_sendADCData(adc_number_of_samples_to_send,(unsigned int*)AR_bufferChA);
+				//USB_sendADCData(adc_number_of_samples_to_send,adc_buffer_to_send);
+	
+				process_sendSampleData(adc_number_of_samples_to_send,(unsigned int*)AR_bufferChA,(unsigned int*)AR_bufferChB);
+//				process_sendSampleData(adc_number_of_samples_to_send,(unsigned int*)memProcessedBufferChA,(unsigned int*)memProcessedBufferChB);
+			
+			}
+			AR_finishedFlag = FALSE;	
 		}
 
 		

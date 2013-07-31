@@ -1,5 +1,5 @@
 /***************************************************************
-	Filename:	processSignal.h
+	Filename:	executeNDT.h
 	Author:		Diogo Aguiam - diogo.aguiam@ist.utl.pt
 	Date:		July 2013
 	Version:	v1.0
@@ -14,17 +14,14 @@
 
 ***************************************************************/
 
-#ifndef _PROCESSSIGNAL_H
-#define _PROCESSSIGNAL_H
+
+#ifndef _NDT_H_
+#define _NDT_H_
+
 
 
 #include "../h/general.h"
 
-int DSP_ModeIQ_AmplitudePhase(unsigned int buffer_size, unsigned int * samples_buffer,float * buffer_amplitude, float * buffer_phase);
-void IRQ_FIR();
-
-
 
 
 #endif
-

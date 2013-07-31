@@ -21,6 +21,8 @@
 #include "..\h\general.h"
 
 
+#define PACKET_HDR_SENDSAMPLEDATA 20;
+
 
 
 int processDDSChangeFreq(unsigned short msg_size, unsigned char * msg_buffer);

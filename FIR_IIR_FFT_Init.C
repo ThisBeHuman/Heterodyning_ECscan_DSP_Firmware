@@ -1,54 +1,33 @@
 /* This file includes the initialization codes for FIR, IIR and FFT Accelerators */
 
-#include "def21469.h"
+#include "def21489.h"
 
 
 
-#include "Cdef21469.h"
+#include "Cdef21489.h"
 
 void Init_FIR();
 
 /* Declaring the external buffers needed for FIR Accelerator*/
-extern int memSamplesBufferChA[];
-extern int memProcessedBufferC[];
-extern int [];
-
-extern int [];
-extern int [];
+extern int FIR_IP_buff1[];
+extern int FIR_OP_buff1[];
+extern int FIR_CF_buff1[];
 
 
 /*Adding the TCB for FIR channels*/
-int FIR_TCB_CH2[13]={
+int FIR_TCB_CH1[13]={
 				0,
 				512,
 				1,
-				,
-				,
+				FIR_CF_buff1,
+				FIR_OP_buff1,
 				512,
 				1,
-				+0,
-				,
+				FIR_OP_buff1+0,
+				FIR_IP_buff1,
 				512,
 				1,
-				+0,
-				511|(511<<14)
-			};
-
-
-
-int FIR_TCB_CH1[13]={
-				FIR_TCB_CH2+12,
-				512,
-				1,
-				,
-				memProcessedBufferC,
-				512,
-				1,
-				memProcessedBufferC+0,
-				memSamplesBufferChA,
-				512,
-				1,
-				memSamplesBufferChA+0,
+				FIR_IP_buff1+0,
 				511|(511<<14)
 			};
 
@@ -60,13 +39,7 @@ void Init_FIR()
 
 	int temp;
 
-	FIR_TCB_CH2[0]=FIR_TCB_CH1+12;
-
-	//Mapping the FIR DMA interrupt
-	temp=*pPICR0;
-	temp&=~(P4I0|P4I1|P4I2|P4I3|P4I4);
-	temp|=P4I0|P4I1|P4I3|P4I4;
-	*pPICR0=temp;
+	FIR_TCB_CH1[0]=FIR_TCB_CH1+12;
 
 	//Selecting the FIR Accelerator
 	temp=*pPMCTL1;
@@ -81,7 +54,7 @@ void Init_FIR()
 	*pCPFIR=FIR_TCB_CH1+12-0x80000;
 
 	//Now Enabling the FIR Accelerator
-	*pFIRCTL1=FIR_EN|FIR_DMAEN|FIR_CH2|FIR_RND0;
+	*pFIRCTL1=FIR_EN|FIR_DMAEN|FIR_CH1|FIR_RND0;
 
 }
 

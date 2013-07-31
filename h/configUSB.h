@@ -62,8 +62,6 @@
 
 #define USB_READ_TIMEOUT 100
 
-#define USB_MAX_PAYLOAD_SIZE	300
-#define USB_MAX_ACK_SIZE	10
 
 
 // USB Error messages
@@ -77,6 +75,7 @@
 #define USB_MSG_CURRENT_SCALE	2
 #define USB_MSG_ADC_SAMPLING	3
 #define USB_MSG_ADC_STOP_SAMPLING	4
+#define USB_MSG_CALIBRATE		5
 
 #define USB_MSG_DDS_POWERDOWN	2
 
@@ -86,11 +85,9 @@
 #define USB_MSG_CURRENT_SCALE_SIZE	2
 #define USB_MSG_ADC_SAMPLING_SIZE	10
 #define USB_MSG_ADC_STOP_SAMPLING_SIZE	1
-
+#define USB_MSG_CALIBRATE_SIZE		1
 #define USB_MSG_DDS_POWERDOWN_SIZE	12//#!
 
-extern unsigned char USB_PAYLOAD_BUFFER[USB_MAX_PAYLOAD_SIZE];
-extern unsigned char USB_ACK_BUFFER[USB_MAX_ACK_SIZE];
 
 
 // Function prototypes
@@ -102,8 +99,9 @@ bool USB_readStartOfPacket(void);
 unsigned short USB_readPacketSize(void);
 int USB_readPayload(unsigned short usb_size, unsigned char * payload_buffer);
 int USB_access(char access, char readwrite, char data);
-int USB_sendADCData(int buffer_size, unsigned short * buffer);
+int USB_sendADCData(int buffer_size, unsigned int * buffer);
 int USB_writeBuffer(int buffer_size, unsigned char * buffer);
+int USB_purge(void);
 
 
 
