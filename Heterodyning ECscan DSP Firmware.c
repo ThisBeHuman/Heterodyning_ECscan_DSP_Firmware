@@ -168,7 +168,8 @@ void main( void )
 	InitGAIN_IO();
 	InitADC_IO();
 	InitUSB_IO();
-
+	InitXY_IO();
+	
 	// #! PCGD
 /*
 	#define CLKD_DIVIDER 1
@@ -197,11 +198,17 @@ void main( void )
 	//ADC_init();
 	USB_init();
 	//Setup_AMI();
+	
+	X_init(MODE_FULL_STEP, MODE_CW);
+	Y_init(MODE_FULL_STEP, MODE_CW);
+	
 
 	// DRIVER DISABLE OUTPUT
 	DRIVER_DISABLE;
 	SRU(HIGH,PBEN03_I);
 	SRU(HIGH,DPI_PBEN14_I);
+	
+	XY_MOTION_ENABLE;
 	
 	// Enable DAI interrupt on falling edge of PCG_FS
     //(*pDAI_IRPTL_PRI) = (SRU_EXTMISCA1_INT  | SRU_EXTMISCA2_INT | SRU_EXTMISCB0_INT);    //unmask individual interrupts
@@ -314,9 +321,10 @@ void main( void )
 	*/
 //					for(i=0;i<1000;i++);
 			if(CAL_calibrateFlag){			
-				CAL_chA_calibration = (AR_bufferChA[0]+AR_bufferChA[1]+AR_bufferChA[2])/3;
-				CAL_chB_calibration = (AR_bufferChB[0]+AR_bufferChB[1]+AR_bufferChB[2])/3;
+				CAL_chA_calibration = (AR_bufferChA[10]+AR_bufferChA[511]+AR_bufferChA[102])/3;
+				CAL_chB_calibration = (AR_bufferChB[10]+AR_bufferChB[511]+AR_bufferChB[102])/3;
 				CAL_calibrateFlag = FALSE;
+				printf("cal chA: %f, chB: %f\n",CAL_chA_calibration,CAL_chB_calibration);
 			}else{
 				timeout = 100000;
 				while(DSP_processingFIR&&timeout--);
@@ -327,7 +335,7 @@ void main( void )
 				//USB_sendADCData(adc_number_of_samples_to_send,adc_buffer_to_send);
 	
 				process_sendSampleData(adc_number_of_samples_to_send,(unsigned int*)AR_bufferChA,(unsigned int*)AR_bufferChB);
-//				process_sendSampleData(adc_number_of_samples_to_send,(unsigned int*)memProcessedBufferChA,(unsigned int*)memProcessedBufferChB);
+//				process_sendSampleData(adc_number_of_samples_to_send,(unsigned int*)memProcessedBufferChA,(unsigned int*)AR_bufferChA);//memProcessedBufferChB);
 			
 			}
 			AR_finishedFlag = FALSE;	

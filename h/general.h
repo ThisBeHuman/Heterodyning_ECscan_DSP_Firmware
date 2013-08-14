@@ -42,6 +42,7 @@
 
 #include "configDDS.h"
 #include "configUSB.h"
+#include "configXY.h"
 #include "processPackets.h"
 #include "global_variables.h"
 
@@ -81,7 +82,7 @@
 
 
 
-
+#define DRIVER_OUTPUT		SRU(HIGH,DAI_PBEN03_I)
 #define DRIVER_DISABLE 	SRU(HIGH,DAI_PB03_I)
 #define DRIVER_ENABLE 	SRU(LOW,DAI_PB03_I)
 

@@ -76,6 +76,10 @@
 #define USB_MSG_ADC_SAMPLING	3
 #define USB_MSG_ADC_STOP_SAMPLING	4
 #define USB_MSG_CALIBRATE		5
+#define USB_MSG_MOVEXY			6
+#define USB_MSG_DRIVER_EN			7
+
+
 
 #define USB_MSG_DDS_POWERDOWN	2
 
@@ -87,8 +91,10 @@
 #define USB_MSG_ADC_STOP_SAMPLING_SIZE	1
 #define USB_MSG_CALIBRATE_SIZE		1
 #define USB_MSG_DDS_POWERDOWN_SIZE	12//#!
+#define USB_MSG_MOVEXY_SIZE		8
+#define USB_MSG_DRIVER_EN_SIZE	2
 
-
+#define USB_MSG_SENDSAMPLEDATA 25
 
 // Function prototypes
 void InitUSB_IO(void);

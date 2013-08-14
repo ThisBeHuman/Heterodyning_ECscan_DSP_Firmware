@@ -51,6 +51,7 @@ extern float memSamplesBufferChB[MAX_SAMPLES_BUFFER_SIZE];
 extern float memProcessedBufferChA[MAX_SAMPLES_BUFFER_SIZE];
 extern float memProcessedBufferChB[MAX_SAMPLES_BUFFER_SIZE];
 extern float memFIRcoeff[];
+extern float memIIRcoeff[];
 
 
 // Digital Signal Processing

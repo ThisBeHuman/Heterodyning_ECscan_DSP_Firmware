@@ -50,6 +50,10 @@ float memFIRcoeff[] = {
 	#include "fir_coeff1s.dat"
 	};
 
+float memIIRcoeff[] = { 
+	#include "iir_coeff.dat"
+	};
+
 float memProcessedBufferChA[MAX_SAMPLES_BUFFER_SIZE];
 float memProcessedBufferChB[MAX_SAMPLES_BUFFER_SIZE];
 

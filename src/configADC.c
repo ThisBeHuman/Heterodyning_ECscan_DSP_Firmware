@@ -1,4 +1,3 @@
-
 /***************************************************************
 	Filename:	configADC.c (ADC and Amplification chain Functions)
 	Author:		Diogo Aguiam - diogo.aguiam@ist.utl.pt
@@ -419,15 +418,18 @@ void ADC_FinishedAR(void)
 	if(AR_continuousSampling){
 		ADC_SwapBuffer();	
 		
-		SIG_LED1_ON;
-		Init_FIR(AR_bufferIndex);	
+//		SIG_LED1_ON;
+		//Init_FIR(AR_bufferIndex);	
 		AR_finishedFlag = TRUE;
 		
 	}else{
 		ADC_StopSampling();
 		
-		SIG_LED1_ON;
-		Init_FIR(AR_bufferIndex);	
+//		SIG_LED1_ON;
+//		Init_FIR(AR_bufferIndex);	
+
+//		Init_IIR(AR_bufferIndex);	
+
 	//	Init_FIR();	
 	//	Init_FIR();	
 		AR_finishedFlag = TRUE;
@@ -562,10 +564,12 @@ void IRQ_ADC_SampleDone(int sig_int)
 
 	
 	// Saves to current Acquisition Run samples buffer memory
-	AR_buffer[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE] = sample;
+//	AR_buffer[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE] = sample;
 	
-	AR_bufferChA[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE] = (sample&0xffff)*2.5/65536 - CAL_chA_calibration;
+	AR_bufferChA[AR_bufferIndex%(MAX_SAMPLES_BUFFER_SIZE)] = (sample&0xffff)*2.5/65536 - CAL_chA_calibration;
 	AR_bufferChB[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE] = ((sample>>16)&0xffff)*2.5/65536 - CAL_chB_calibration;
+//	AR_bufferChA[AR_bufferIndex%(MAX_SAMPLES_BUFFER_SIZE)] = 32000*2.5/65536 - CAL_chA_calibration;
+//	AR_bufferChB[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE] = 20000*2.5/65536 - CAL_chB_calibration;
 	
 //	SAMPLES_MEMORY[samples_memory_index%MAXSAMPLES] = sample;
 

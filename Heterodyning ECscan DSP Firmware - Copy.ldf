@@ -156,7 +156,7 @@ MEMORY
   // 0x000C 0000 to 0x000C 5554  Normal word (48) Space (1 Mbit RAM)
   // 0x000C 0000 to 0x000C 7FFF  Normal word (32) Space (1 Mbit RAM)
   // 0x0018 0000 to 0x0018 FFFF  Short word (16) Space (1 Mbit RAM)
-  seg_pmda { TYPE(PM RAM) START(0x000C0000) END(0x000C7FFF) WIDTH(32) }
+  seg_pmda  { TYPE(DM RAM) START(0x000C0000) END(0x000C7FFF) WIDTH(32) }
 
   // ------------------------- BLOCK 3 -----------------------------------------
   // 0x000E 0000 to 0x000E 5554  Normal word (48) Space (1 Mbit RAM)

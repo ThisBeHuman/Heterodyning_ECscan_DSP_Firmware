@@ -21,7 +21,6 @@
 #include "..\h\general.h"
 
 
-#define PACKET_HDR_SENDSAMPLEDATA 20;
 
 
 

@@ -81,6 +81,18 @@ int USB_processPayload(unsigned short payload_size, unsigned char * payload_buff
 			
 			processCalibrate(payload_size, payload_buffer);
 			break;
+		case USB_MSG_MOVEXY:
+//			printf("payload size:%d\n",payload_size);
+			if(payload_size != USB_MSG_MOVEXY_SIZE) return USB_WRONG_CMD_SIZE;
+			
+			processMoveXY(payload_size, payload_buffer);
+			break;
+		case USB_MSG_DRIVER_EN:
+//			printf("payload size:%d\n",payload_size);
+			if(payload_size != USB_MSG_DRIVER_EN_SIZE) return USB_WRONG_CMD_SIZE;
+			
+			processDriverEn(payload_size, payload_buffer);
+			break;
 		default:
 			return USB_ERROR_FLAG;
 		
@@ -283,7 +295,7 @@ int processADCStartSampling(unsigned short msg_size, unsigned char * msg_buffer)
 	number_of_samples |= msg_buffer[8] <<8;
 	number_of_samples |= msg_buffer[9];
 	
-	DRIVER_ENABLE;
+//	DRIVER_ENABLE;
 	ADC_StartSampling(number_of_samples, sampling_period, continuous_sampling);
 	
 	process_sendAcknowledge(msg_buffer[0]);
@@ -396,10 +408,12 @@ int process_sendAcknowledge(unsigned char header)
 	USB_ACK_BUFFER[4] = acknowledge_packet_size&0xff;
 	USB_ACK_BUFFER[5] = header;
 	
-	printf("sent acknowledge: %x\n",header);
+//	printf("sent acknowledge: %x\n",header);
+
 	if(USB_writeBuffer(acknowledge_payload_size, &USB_ACK_BUFFER[0]) == USB_ERROR_FLAG){
 		return USB_ERROR_FLAG;	
 	} 
+
 	return TRUE;
 }
 
@@ -418,20 +432,21 @@ int process_sendAcknowledge(unsigned char header)
 ************************************************************/
 int process_sendSampleData(unsigned short sample_size, float * bufferChA, float * bufferChB)
 {
-	unsigned int packet_size;
+	unsigned int packet_size, payload_size;
 	unsigned short sendSampleData_header_size=6;
 	
 	float whatfloat[]={0,1,2,3,4};
 	packet_size = sizeof(float);
-	packet_size = 1 + sample_size*2*sizeof(float);
+	packet_size = 1 + sample_size*2*4;//sizeof(float);
+	payload_size = sample_size+1;
 	
 	USB_ACK_BUFFER[0] = USB_START_OF_PACKET_TO_HOST;
-	USB_ACK_BUFFER[1] = (sample_size>>24&0xff);
-	USB_ACK_BUFFER[2] = (sample_size>>16&0xff);
-	USB_ACK_BUFFER[3] = (sample_size>>8&0xff);
-	USB_ACK_BUFFER[4] = sample_size&0xff;
+	USB_ACK_BUFFER[1] = (packet_size>>24&0xff);
+	USB_ACK_BUFFER[2] = (packet_size>>16&0xff);
+	USB_ACK_BUFFER[3] = (packet_size>>8&0xff);
+	USB_ACK_BUFFER[4] = packet_size&0xff;
 	
-	USB_ACK_BUFFER[5] = PACKET_HDR_SENDSAMPLEDATA; // header
+	USB_ACK_BUFFER[5] = USB_MSG_SENDSAMPLEDATA; // header
 	
 	
 	
@@ -447,6 +462,92 @@ int process_sendSampleData(unsigned short sample_size, float * bufferChA, float 
 		return USB_ERROR_FLAG;	
 	} 
 	
+	return TRUE;
+}
+
+
+/************************************************************
+	Function:	int processMoveXY (unsigned short msg_size, unsigned char * msg_buffer)
+	Argument:	unsigned short msg_size - Payload message size for confirmation
+ 				unsigned char * msg_buffer - Payload buffer with message to process
+	Return:		TRUE if message has been processed without errors.
+				USB_ERROR_FLAG if there was an error
+			
+			
+	Description: Moves probe a number of steps on the X or Y axis.
+		
+	Extra:	
+			byte XY
+			int steps
+************************************************************/
+int processMoveXY(unsigned short msg_size, unsigned char * msg_buffer)
+{
+	int i;	
+	int steps;
+	char cw_ccw;
+	char half_full;
+	char XY;
+	// Checks if this message corresponds to a Change Frequency command
+	if(msg_size != USB_MSG_MOVEXY_SIZE 
+		&& msg_buffer[0] != USB_MSG_MOVEXY) {
+			printf("error XY!\n");//#!
+			return USB_WRONG_CMD;
+	}
+	 
+	XY = msg_buffer[1];
+	half_full = msg_buffer[2];
+	cw_ccw = msg_buffer[3];
+	steps = (msg_buffer[4]<<24|msg_buffer[5]<<16|msg_buffer[6]<<8 | msg_buffer[7])&0xffffffff;
+//	printf("move: %d %d\n",XY, steps);
+
+	if(XY == MOVE_X){
+		X_init( half_full,  cw_ccw);
+		X_move(steps);
+	}else if(XY == MOVE_Y){
+		Y_init( half_full,  cw_ccw);
+		Y_move(steps);	
+		
+	}
+	process_sendAcknowledge(msg_buffer[0]);
+
+	return TRUE;
+}
+
+
+
+/************************************************************
+	Function:	int processDriverEnable (unsigned short msg_size, unsigned char * msg_buffer)
+	Argument:	unsigned short msg_size - Payload message size for confirmation
+ 				unsigned char * msg_buffer - Payload buffer with message to process
+	Return:		TRUE if message has been processed without errors.
+				USB_ERROR_FLAG if there was an error
+			
+			
+	Description: Enables or Disables the driver
+		
+	Extra:	
+			byte ENABLE/DISABLE
+			
+************************************************************/
+int processDriverEn(unsigned short msg_size, unsigned char * msg_buffer)
+{
+	int temp;	
+	// Checks if this message corresponds to a Change Frequency command
+	if(msg_size != USB_MSG_DRIVER_EN_SIZE 
+		&& msg_buffer[0] != USB_MSG_DRIVER_EN) {
+			printf("error Driver EN!\n");//#!
+			return USB_WRONG_CMD;
+	}
+	temp = msg_buffer[1]& 0xff;
+	printf("DRIVER %d\n", temp);
+
+	if(temp == 0){
+		DRIVER_DISABLE ;
+	}else{
+		DRIVER_ENABLE;
+	}			
+	process_sendAcknowledge(msg_buffer[0]);
+
 	return TRUE;
 }
 

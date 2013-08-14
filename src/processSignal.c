@@ -74,6 +74,46 @@ int FIR_TCB_CH1[13]={
 			};
 
 
+
+/*Adding the TCB for IIR channels*/
+int IIR_TCB_CH2[13]={
+				0,
+				3,
+				1,
+				memIIRcoeff,
+				memProcessedBufferChB,
+				MAX_SAMPLES_BUFFER_SIZE,
+				1,
+				memProcessedBufferChB+0,
+				memSamplesBufferChB,
+				MAX_SAMPLES_BUFFER_SIZE,
+				1,
+				memSamplesBufferChB+0,
+				(0)|((MAX_SAMPLES_BUFFER_SIZE-1)<<14)
+			};
+
+
+
+int IIR_TCB_CH1[13]={
+				IIR_TCB_CH2+12,
+				3,
+				1,
+				memIIRcoeff,
+				memProcessedBufferChA,
+				MAX_SAMPLES_BUFFER_SIZE,
+				1,
+				memProcessedBufferChA+0,
+				memSamplesBufferChA,
+				MAX_SAMPLES_BUFFER_SIZE,
+				1,
+				memSamplesBufferChA+0,
+				(0)|((MAX_SAMPLES_BUFFER_SIZE-1)<<14)
+			};
+
+
+			
+			
+			
 /* Adding the Initialization Code for FIR Accelerator Now */
 
 void Init_FIR(int window_size)
@@ -134,7 +174,71 @@ void Init_FIR(int window_size)
 	*pFIRCTL1=FIR_EN|FIR_DMAEN|FIR_CH2|FIR_RND0;
 	
 	DSP_processingFIR = TRUE;
-	SIG_LED2_ON;
+//	SIG_LED2_ON;
+
+}
+
+/* Adding the Initialization Code for FIR Accelerator Now */
+
+void Init_IIR(int window_size)
+{
+
+	int temp;
+	int timeout = 1000000;
+	
+	
+	//while(DSP_processingFIR&&timeout--);
+//	while(DSP_processingFIR);
+
+/*
+	while(1){
+		temp = *pFIRDMASTAT;
+		if(temp & FIR_DMAACDONE){
+			break;
+		}
+	}
+*/
+
+	IIR_TCB_CH2[0]=IIR_TCB_CH1+12;
+	
+/*	FIR_TCB_CH1[5] = window_size;
+	FIR_TCB_CH1[9] = window_size;
+	FIR_TCB_CH1[12] = (window_size-1)|((window_size-1)<<14);
+	FIR_TCB_CH2[5] = window_size;
+	FIR_TCB_CH2[9] = window_size;
+	FIR_TCB_CH2[12] = (window_size-1)|((window_size-1)<<14);
+*/
+	//Mapping the FIR DMA interrupt
+	temp=*pPICR0;
+	temp&=~(P5I0|P5I1|P5I2|P5I3|P5I4);
+	temp|=P5I0|P5I1|P5I3|P5I4;
+	*pPICR0=temp;
+
+	interrupt(SIG_P5,IRQ_FIR);
+	
+	//Selecting the FIR Accelerator
+	temp=*pPMCTL1;
+	temp&=~(BIT_17|BIT_18);
+	temp|=IIRACCSEL;
+	*pPMCTL1=temp;
+	
+	//PMCTL1 effect latency
+		asm("nop;nop;nop;nop;");
+
+		//Initializing the chain pointer register
+	*pCPFIR=IIR_TCB_CH1+12-0x80000;
+
+	// Confirms there is no FIR processing in accelerator
+//	while(DSP_processingFIR==0);
+	
+	// Must clear DMAEN to reload new data on the buffers to the DMA
+	*pFIRCTL1&=~(IIR_DMAEN);//|FIR_EN);
+
+	//Now Enabling the FIR Accelerator
+	*pFIRCTL1=IIR_EN|FIR_DMAEN|IIR_CH2|IIR_RND0;
+	
+	DSP_processingFIR = TRUE;
+//	SIG_LED2_ON;
 
 }
 
@@ -156,7 +260,7 @@ void IRQ_FIR()
 //	adc_buffer_to_send = (unsigned int*)memProcessedBufferChA;
 //	adc_number_of_samples_to_send = AR_totalSamples;
 //	adc_send_continuous_samples = 1;
-	SIG_LED2_OFF;
+//	SIG_LED2_OFF;
 //	adc_sample_buffer_full = 1;
 //	adc_send_continuous_samples = 1;
 	DSP_processingFIR = FALSE;
