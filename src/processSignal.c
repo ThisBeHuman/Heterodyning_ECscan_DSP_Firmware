@@ -38,7 +38,16 @@ extern float memSamplesBufferChB[];
 extern float memProcessedBufferChB[];
 
 
-/*Adding the TCB for FIR channels*/
+int Init_IIR_soft(){
+	
+	int i;
+	for (i=0; i<TAPS_IIR+1; i++) {
+		IIR_statesChA[i] = 0.0;
+		IIR_statesChB[i] = 0.0;
+	}
+}
+
+/*Adding the TCB for FIR channels
 int FIR_TCB_CH2[13]={
 				0,
 				51,
@@ -73,9 +82,9 @@ int FIR_TCB_CH1[13]={
 				(MAX_SAMPLES_BUFFER_SIZE-1)|((MAX_SAMPLES_BUFFER_SIZE-1)<<14)
 			};
 
+*/
 
-
-/*Adding the TCB for IIR channels*/
+/*Adding the TCB for IIR channels
 int IIR_TCB_CH2[13]={
 				0,
 				3,
@@ -112,7 +121,7 @@ int IIR_TCB_CH1[13]={
 
 
 			
-			
+		*/	
 			
 /* Adding the Initialization Code for FIR Accelerator Now */
 
@@ -135,7 +144,7 @@ void Init_FIR(int window_size)
 	}
 */
 
-	FIR_TCB_CH2[0]=FIR_TCB_CH1+12;
+//$!	FIR_TCB_CH2[0]=FIR_TCB_CH1+12;
 	
 /*	FIR_TCB_CH1[5] = window_size;
 	FIR_TCB_CH1[9] = window_size;
@@ -162,7 +171,7 @@ void Init_FIR(int window_size)
 		asm("nop;nop;nop;nop;");
 
 		//Initializing the chain pointer register
-	*pCPFIR=FIR_TCB_CH1+12-0x80000;
+//$!	*pCPFIR=FIR_TCB_CH1+12-0x80000;
 
 	// Confirms there is no FIR processing in accelerator
 //	while(DSP_processingFIR==0);
@@ -199,7 +208,7 @@ void Init_IIR(int window_size)
 	}
 */
 
-	IIR_TCB_CH2[0]=IIR_TCB_CH1+12;
+//$!	IIR_TCB_CH2[0]=IIR_TCB_CH1+12;
 	
 /*	FIR_TCB_CH1[5] = window_size;
 	FIR_TCB_CH1[9] = window_size;
@@ -226,7 +235,7 @@ void Init_IIR(int window_size)
 		asm("nop;nop;nop;nop;");
 
 		//Initializing the chain pointer register
-	*pCPFIR=IIR_TCB_CH1+12-0x80000;
+//$!	*pCPFIR=IIR_TCB_CH1+12-0x80000;
 
 	// Confirms there is no FIR processing in accelerator
 //	while(DSP_processingFIR==0);

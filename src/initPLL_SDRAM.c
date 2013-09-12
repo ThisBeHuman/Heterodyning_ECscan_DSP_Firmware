@@ -26,7 +26,7 @@ int i, pmctlsetting;
 
     // CLKIN= 24.576 MHz, Multiplier= 27, Divisor= 1, INDIV=1, CCLK_SDCLK_RATIO= 2.
     // Core clock = (24.576 MHz * 27) /2 = 331.776 MHz
-    pmctlsetting= SDCKR2|PLLM32|INDIV|DIVEN;
+    pmctlsetting= PLLM32|INDIV|DIVEN;
     *pPMCTL= pmctlsetting;
     pmctlsetting|= PLLBP;
     *pPMCTL= pmctlsetting;
@@ -37,7 +37,6 @@ int i, pmctlsetting;
 
     *pPMCTL ^= PLLBP;       //Clear Bypass Mode
     *pPMCTL |= (CLKOUTEN);  //and start clkout
-
 
     // Programming SDRAM control registers and enabling SDRAM read optimization
     // CCLK_SDCLK_RATIO= 2.5

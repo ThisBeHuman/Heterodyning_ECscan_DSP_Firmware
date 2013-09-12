@@ -306,7 +306,7 @@ void ADC_init(unsigned int sample_period)
 
 	
 	*pPCG_PW2 = ((sample_period*PCG_TICKS_PER_uSEC)-1)<<16;
-	*pPCG_SYNC1 = 0;	
+	//*pPCG_SYNC1 = 0;	
 	*pPCG_CTLD1 = PCG_CLKD_DIVIDER; 
 	*pPCG_CTLD0 =  (sample_period*PCG_TICKS_PER_uSEC) | ENFSD | ENCLKD ;
 
@@ -384,7 +384,7 @@ void ADC_StopSampling(void)
 void ADC_SwapBuffer(void)
 {
 
-	
+/*	
 	AR_bufferIndex=0;
 	if(AR_buffer == memSamplesBuffer1){
 		AR_buffer = memSamplesBuffer2;
@@ -393,7 +393,7 @@ void ADC_SwapBuffer(void)
 		AR_buffer = memSamplesBuffer1;
 	//	printf("samplebuffer1\n");
 	}
-	
+*/	
 }
 
 /************************************************************
@@ -407,7 +407,7 @@ void ADC_SwapBuffer(void)
 ************************************************************/
 void ADC_FinishedAR(void)
 {
-	adc_buffer_to_send = (unsigned int*)memProcessedBufferChA;//AR_bufferChA;//memSamplesBuffer1;//
+//	adc_buffer_to_send = (unsigned int*)memProcessedBufferChA;//AR_bufferChA;//memSamplesBuffer1;//
 	adc_number_of_samples_to_send = AR_bufferIndex;
 //	adc_send_continuous_samples = 1;
 	
@@ -460,6 +460,8 @@ void ADC_StartSampling(unsigned int number_samples, unsigned int sample_period, 
 	AR_totalSamples = number_samples;
 	
 	AR_continuousSampling = continuous_sampling;
+	
+//	Init_IIR_soft();
 	
 //	printf("StartSampling!\n");
 	ADC_init(sample_period);
@@ -570,6 +572,12 @@ void IRQ_ADC_SampleDone(int sig_int)
 	AR_bufferChB[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE] = ((sample>>16)&0xffff)*2.5/65536 - CAL_chB_calibration;
 //	AR_bufferChA[AR_bufferIndex%(MAX_SAMPLES_BUFFER_SIZE)] = 32000*2.5/65536 - CAL_chA_calibration;
 //	AR_bufferChB[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE] = 20000*2.5/65536 - CAL_chB_calibration;
+	
+
+//#!  Low pass filter iir? Uncomment the next two lines
+	AR_bufferChA[AR_bufferIndex%(MAX_SAMPLES_BUFFER_SIZE)] = iir(AR_bufferChA[AR_bufferIndex%(MAX_SAMPLES_BUFFER_SIZE)], ACoeffs, BCoeffs, IIR_statesChA, TAPS_IIR);
+	AR_bufferChB[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE] = iir(AR_bufferChB[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE], ACoeffs, BCoeffs, IIR_statesChB, TAPS_IIR);
+	
 	
 //	SAMPLES_MEMORY[samples_memory_index%MAXSAMPLES] = sample;
 

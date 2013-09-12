@@ -1,12 +1,15 @@
 /***************************************************************
 	Filename:	configDDS.c (DDS Configuration Functions)
 	Author:		Diogo Aguiam - diogo.aguiam@ist.utl.pt
-	Date:		July 2013
+	Date:		September 2013
 	Version:	v1.1
 	Revisions:
 				1.0 April 2013 - Prototype Definitions
 				1.1	July 2013 - Update to final board with adsp21489
-	
+				1.2 September 2013 - Added DDS oscillator clock generated
+								by DSP, on the DDS_OSC_EN pin.
+								
+				
 	Dependecies:	configDDS.h
 					
 	Purpose:	Configuration of the Direct Digital Synthesizers
@@ -91,7 +94,9 @@ void InitDDS_IO(void){
 // Starting value of the Output Pins.
 	
 	// DDS Oscillator Enable (default: HIGH)
-	DDS_OSC_EN_ON;	
+			//DDS_OSC_EN_ON;	
+	// DDS Oscillator generated internally by PCG
+	SRU (PCG_FSA_O, DAI_PB08_I);
 	// Driver Current Scale (default: minimum scale 00)
 	DDS_SCALE_b1_L;	// b1
 	DDS_SCALE_b0_L;	// b0
@@ -192,6 +197,26 @@ void DDS_reset(void){
 void DDS_init(void){
 		char k,i;
 		
+		// 0. Generate DDS_OSCILLATOR_CLOCK
+		
+	//	*pPCG_PW2 = ((sample_period*PCG_TICKS_PER_uSEC)-1)<<16;
+		// PCG clock input is from PCLK
+		*pPCG_SYNC1 |= CLKA_SOURCE_IOP|FSA_SOURCE_IOP|CLKA_SYNC;
+		*pPCG_CTLA1 |= 0; 
+		// DDS_OSC = 20MHz
+		*pPCG_CTLA0 =  DDS_OSC_PCLK_DIVIDER | ENFSA | ENCLKA ;
+
+		/*  To output a 100 MHz signal to the output of the DAI.
+		*pPCG_SYNC1 |= CLKB_SOURCE_IOP|FSB_SOURCE_IOP|CLKB_SYNC;
+		*pPCG_CTLB1 |= 0; 
+		// DDS_OSC = 20MHz
+		*pPCG_CTLB0 =  2 | ENFSB | ENCLKB ;
+		SRU (PCG_FSB_O, DAI_PB12_I);
+		SRU(HIGH,PBEN12_I);
+		*/
+		
+		
+		
 		// 1. Reset all DDS.
 		DDS_reset();
 		
@@ -201,7 +226,7 @@ void DDS_init(void){
 		DDS_W_CLK3_H;
 
 		for(k=0;k<100;k++);
-				
+					
 		DDS_W_CLK1_L;
 		DDS_W_CLK2_L;
 		DDS_W_CLK3_L;

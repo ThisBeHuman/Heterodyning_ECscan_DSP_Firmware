@@ -372,8 +372,8 @@ int processCalibrate(unsigned short msg_size, unsigned char * msg_buffer)
 	CAL_chA_calibration=0;
 	CAL_chB_calibration=0;
 	// #! 3 samples 10us, single acquisition
-	
-	ADC_StartSampling(1024, 10, 0);
+	Init_IIR_soft();
+	ADC_StartSampling(4000, 7, 0);
 //	while(~AR_finishedFlag);
 	for(i=0;i<1;i++);
 	CAL_calibrateFlag = TRUE;

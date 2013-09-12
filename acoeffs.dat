@@ -1,0 +1,5 @@
+//[b,a] = butter(4,.001, 'low'); b= flipud(b'); a = -flipud(a');
+// b numerator, a denominator
+- 0.98593364866370947      ,
+1.9858340143161317,
+-1

@@ -68,9 +68,10 @@
 
 #define MOVE_Y	1
 
+
 #define MOVE_XY_CLK_DELAY 	500
-#define MOVE_X_DELAY 	250000
-#define MOVE_Y_DELAY 	250000
+#define MOVE_X_DELAY 	1200000
+#define MOVE_Y_DELAY 	400000
 
 // Modes of operation definition
 

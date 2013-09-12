@@ -22,7 +22,7 @@ bool AR_finishedFlag = 0;
 bool AR_finishedFIR = 0;
 unsigned int AR_totalSamples;
 unsigned int AR_bufferIndex=0;
-unsigned int *AR_buffer=memSamplesBuffer1;
+//unsigned int *AR_buffer=memSamplesBuffer1;
 float *AR_bufferChA=memSamplesBufferChA;
 float *AR_bufferChB=memSamplesBufferChB;
 
@@ -32,19 +32,37 @@ unsigned char AR_continuousSampling=0;
 bool DSP_processingFIR =0;
 
 
-unsigned int * current_memSamplesBuffer = memSamplesBuffer1;
+//unsigned int * current_memSamplesBuffer = memSamplesBuffer1;
 unsigned int current_memSamplesBuffer_index = 0;
 
 float CAL_chA_calibration=0;
 float CAL_chB_calibration=0;
 bool 	CAL_calibrateFlag=0;
 
+float dm IIR_statesChA[TAPS_IIR+1];
+float dm IIR_statesChB[TAPS_IIR+1];
+
+float pm ACoeffs[TAPS_IIR] =
+{
+	#include "acoeffs.dat"
+};
+float  pm BCoeffs[TAPS_IIR+1] =
+{
+	#include "bcoeffs.dat"
+};
+float  pm IIR_coeffs[2*TAPS_IIR] =
+{
+	#include "iir_coeffs.dat"
+};
+
+
 #pragma section("seg_pmda") 
-unsigned int memSamplesBuffer1[MAX_SAMPLES_BUFFER_SIZE];
-unsigned int memSamplesBuffer2[MAX_SAMPLES_BUFFER_SIZE];
+//unsigned int memSamplesBuffer1[MAX_SAMPLES_BUFFER_SIZE];
+//unsigned int memSamplesBuffer2[MAX_SAMPLES_BUFFER_SIZE];
 
 float memSamplesBufferChA[MAX_SAMPLES_BUFFER_SIZE];
 float memSamplesBufferChB[MAX_SAMPLES_BUFFER_SIZE];
+
 
 float memFIRcoeff[] = { 
 	#include "fir_coeff1s.dat"
@@ -53,7 +71,12 @@ float memFIRcoeff[] = {
 float memIIRcoeff[] = { 
 	#include "iir_coeff.dat"
 	};
+	
+	
 
+
+	
+	
 float memProcessedBufferChA[MAX_SAMPLES_BUFFER_SIZE];
 float memProcessedBufferChB[MAX_SAMPLES_BUFFER_SIZE];
 

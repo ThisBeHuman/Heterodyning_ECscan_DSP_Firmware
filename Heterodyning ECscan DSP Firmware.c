@@ -57,6 +57,69 @@ void Setup_Ints(void)
 
 
 
+/************************************************************
+	Function:		IRQ_aliveTimer 
+	Argument:	int sigint;
+				
+	Description:
+			Occurs when a specified timer for each the alive 
+			signal was flagged.
+	Action:		
+				
+************************************************************/
+
+void IRQ_aliveTimer(int sigint)
+{
+	int i;
+	static int onoff=0;
+	static int alive_duty_cycle=0;
+	// Clears Timer interrupt
+	*pTMSTAT &= TIM1IRQ;
+	
+	alive_duty_cycle++;
+	if(alive_duty_cycle%ALIVE_DUTYCYCLE==0){
+		SIG_ALIVE_ON;
+		alive_duty_cycle=0;
+	}else{
+		SIG_ALIVE_OFF;
+	}
+	
+/*	if(onoff==0){
+		SIG_ALIVE_OFF;
+		onoff=1;
+	}else{
+		SIG_ALIVE_ON;
+		onoff=0;
+	}
+*/
+
+}
+
+/************************************************************
+	Function:		Alive_timer_init() 
+	Argument:	
+				
+	Description:
+			Initializes timer to allow stepping the steppers
+	Action:		
+				
+************************************************************/
+
+void Alive_timer_init (void)
+{
+
+	
+    *pTM1CTL = (TIMODEPWM | PULSE | PRDCNT | IRQEN);
+    *pTM1PRD = ALIVE_TIMER_PRD;
+    *pTM1W = *pTM1PRD/2;//(CNV_uSEC * TICKS_PER_uSEC-3); // 10% pulse
+	*pTM1STAT = TIM1EN;
+
+	
+    //*pDAI_IRPTL_PRI |= SRU_EXTMISCB0_INT;
+    //*pDAI_IRPTL_RE |= SRU_EXTMISCB0_INT;
+   	interrupt(SIG_GPTMR1, IRQ_aliveTimer);
+}
+
 
 
 
@@ -73,11 +136,7 @@ void IRQ_timer(int sigint)
 
 void initTimer0 (void)
 {
-// timer7 is the 1mSec tick timer
-  
-	SRU (HIGH, DPI_PBEN06_I);
-	SRU (TIMER0_O, DPI_PB06_I);
-	SRU(TIMER0_O, TIMER0_I);
+
 
     *pTM0CTL = (TIMODEPWM | PULSE | PRDCNT | IRQEN);
     *pTM0PRD = CNV_uSEC * TICKS_PER_uSEC;
@@ -87,9 +146,7 @@ void initTimer0 (void)
 	
     *pDAI_IRPTL_PRI |= SRU_EXTMISCB0_INT;
     *pDAI_IRPTL_RE |= SRU_EXTMISCB0_INT;
-   	interrupts(SIG_P0,IRQ_ADC_SampleReady);
-    interruptf(SIG_SP3,IRQ_ADC_SampleDone);
-	interrupts(SIG_GPTMR0, IRQ_timer);
+   	interrupts(SIG_GPTMR0, IRQ_timer);
 }
 
 
@@ -97,7 +154,9 @@ void initTimer0 (void)
 void main( void )
 {
 	/* Begin adding your custom code here */
-	int i,z=0,k = 0,nr=0;
+
+
+		int i,z=0,k = 0,nr=0;
 	int j=0;
 	
 	int temp;
@@ -158,6 +217,14 @@ void main( void )
 	SIG_LED2_EN;
 	SIG_LED3_EN;
 	SIG_LED4_EN;
+	SIG_ALIVE_OFF;
+	SIG_RUNNING_OFF;
+	SIG_HOST_OFF;
+	SIG_ERROR_OFF;
+	SIG_LED1_OFF;
+	SIG_LED2_OFF;
+	SIG_LED3_OFF;
+	SIG_LED4_OFF;
 	
 	
 	
@@ -190,7 +257,7 @@ void main( void )
 	//#! END OF
 */	
 	Setup_Ints();
-	
+	Alive_timer_init();
 	DDS_init();
 	// Double Reset and INIT - Makes no sense but works...
 	DDS_init();
@@ -202,7 +269,9 @@ void main( void )
 	X_init(MODE_FULL_STEP, MODE_CW);
 	Y_init(MODE_FULL_STEP, MODE_CW);
 	
-
+	XY_timer_init();
+	
+	
 	// DRIVER DISABLE OUTPUT
 	DRIVER_DISABLE;
 	SRU(HIGH,PBEN03_I);
@@ -248,7 +317,7 @@ void main( void )
 		}
 		
 /* USB	*/	
-			if(z==0){
+	/*		if(z==0){
 				z=1;
 				SIG_ALIVE_ON;
 				//SIG_LED2_OFF;
@@ -258,7 +327,7 @@ void main( void )
 			//	SIG_LED2_ON;
 			}
 					for(i=0;i<1000;i++);	
-
+*/
 			
 		// USB Polling
 		//	usbdata = USB_access(USB_STATUS, USB_READ, USB_NULL);
@@ -321,10 +390,12 @@ void main( void )
 	*/
 //					for(i=0;i<1000;i++);
 			if(CAL_calibrateFlag){			
-				CAL_chA_calibration = (AR_bufferChA[10]+AR_bufferChA[511]+AR_bufferChA[102])/3;
-				CAL_chB_calibration = (AR_bufferChB[10]+AR_bufferChB[511]+AR_bufferChB[102])/3;
+				CAL_chA_calibration = (AR_bufferChA[3310]+AR_bufferChA[3511]+AR_bufferChA[3102])/3;
+				CAL_chB_calibration = (AR_bufferChB[3310]+AR_bufferChB[3511]+AR_bufferChB[3102])/3;
 				CAL_calibrateFlag = FALSE;
 				printf("cal chA: %f, chB: %f\n",CAL_chA_calibration,CAL_chB_calibration);
+				Init_IIR_soft();
+				
 			}else{
 				timeout = 100000;
 				while(DSP_processingFIR&&timeout--);
@@ -333,7 +404,9 @@ void main( void )
 	//			USB_sendADCData(adc_number_of_samples_to_send,(unsigned int*)memProcessedBufferChA);
 	//			USB_sendADCData(adc_number_of_samples_to_send,(unsigned int*)AR_bufferChA);
 				//USB_sendADCData(adc_number_of_samples_to_send,adc_buffer_to_send);
-	
+			//	Init_IIR_soft();
+				//iir(AR_bufferChB,memProcessedBufferChB, IIR_coeffs, IIR_states,adc_number_of_samples_to_send,0);				
+				
 				process_sendSampleData(adc_number_of_samples_to_send,(unsigned int*)AR_bufferChA,(unsigned int*)AR_bufferChB);
 //				process_sendSampleData(adc_number_of_samples_to_send,(unsigned int*)memProcessedBufferChA,(unsigned int*)AR_bufferChA);//memProcessedBufferChB);
 			

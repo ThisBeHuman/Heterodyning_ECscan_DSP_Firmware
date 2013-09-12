@@ -32,6 +32,10 @@
 #include <sru.h>
 #include <math.h>
 
+// Scalar based iir/fir
+#include <filters.h>
+// Vector Based iir/fir
+//#include <filter.h>
 
 //#include <initPLL.h> 
 
@@ -51,6 +55,8 @@
 #define SIG_ALIVE_EN 	SRU(HIGH,DPI_PBEN14_I)
 #define SIG_ALIVE_ON 	SRU(LOW,  DPI_PB14_I)
 #define SIG_ALIVE_OFF 	SRU(HIGH,   DPI_PB14_I)
+#define ALIVE_TIMER_PRD	10000000
+#define ALIVE_DUTYCYCLE	10
 
 #define SIG_LED1_EN 	SRU(HIGH,DPI_PBEN07_I)
 #define SIG_LED1_ON 	SRU(LOW,  DPI_PB07_I)
@@ -76,15 +82,15 @@
 #define SIG_HOST_ON		 	SRU(LOW,  DPI_PB12_I)
 #define SIG_HOST_OFF 		SRU(HIGH,   DPI_PB12_I)
 
-#define SIG_ERROR_EN 		SRU(HIGH,DPI_PBEN12_I)
-#define SIG_ERROR_ON		SRU(LOW,  DPI_PB12_I)
-#define SIG_ERROR_OFF 		SRU(HIGH,   DPI_PB12_I)
+#define SIG_ERROR_EN 		SRU(HIGH,DPI_PBEN13_I)
+#define SIG_ERROR_ON		SRU(LOW,  DPI_PB13_I)
+#define SIG_ERROR_OFF 		SRU(HIGH,   DPI_PB13_I)
 
 
 
 #define DRIVER_OUTPUT		SRU(HIGH,DAI_PBEN03_I)
-#define DRIVER_DISABLE 	SRU(HIGH,DAI_PB03_I)
-#define DRIVER_ENABLE 	SRU(LOW,DAI_PB03_I)
+#define DRIVER_DISABLE 	SIG_RUNNING_OFF;SRU(HIGH,DAI_PB03_I)
+#define DRIVER_ENABLE 	SIG_RUNNING_ON;SRU(LOW,DAI_PB03_I)
 
 
 #define TRUE 	1

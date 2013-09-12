@@ -104,6 +104,14 @@ Dphase = (Fout*2^32)/SystemClock
 //#define DDS_FREQUENCY_MULTIPLIER	24	// For 180 MHz oscillator
 
 
+// PCG DDS Oscillator defines
+
+#define DDS_OSC_PCLK_DIVIDER 10  // PCLK = 200MHz, DDS_OSC = 20MHz
+
+
+
+
+
 /*
 //  For system clock of 30 MHz
 #define DDS_10MHz 	1431655765
