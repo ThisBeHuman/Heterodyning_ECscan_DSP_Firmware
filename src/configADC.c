@@ -420,8 +420,7 @@ void ADC_FinishedAR(void)
 		
 //		SIG_LED1_ON;
 		//Init_FIR(AR_bufferIndex);	
-		AR_finishedFlag = TRUE;
-		
+		ADC_StopSampling();
 	}else{
 		ADC_StopSampling();
 		
@@ -435,6 +434,7 @@ void ADC_FinishedAR(void)
 		AR_finishedFlag = TRUE;
 
 	}
+	AR_finishedFlag = TRUE;
 
 	
 }
@@ -458,6 +458,12 @@ void ADC_StartSampling(unsigned int number_samples, unsigned int sample_period, 
 {
 	AR_bufferIndex=0;
 	AR_totalSamples = number_samples;
+	
+	if(OpMode == MODE_IF){
+		//Init_FIR_BPsoft();
+		Init_IIR_BPsoft();
+//		AR_totalSamples +=50;
+	}
 	
 	AR_continuousSampling = continuous_sampling;
 	
@@ -568,18 +574,14 @@ void IRQ_ADC_SampleDone(int sig_int)
 	// Saves to current Acquisition Run samples buffer memory
 //	AR_buffer[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE] = sample;
 	
-	AR_bufferChA[AR_bufferIndex%(MAX_SAMPLES_BUFFER_SIZE)] = (sample&0xffff)*2.5/65536 - CAL_chA_calibration;
-	AR_bufferChB[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE] = ((sample>>16)&0xffff)*2.5/65536 - CAL_chB_calibration;
-//	AR_bufferChA[AR_bufferIndex%(MAX_SAMPLES_BUFFER_SIZE)] = 32000*2.5/65536 - CAL_chA_calibration;
-//	AR_bufferChB[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE] = 20000*2.5/65536 - CAL_chB_calibration;
-	
+	AR_bufferChA[AR_bufferIndex%(MAX_SAMPLES_BUFFER_SIZE)] = (sample&0xffff)*2.5/65536;// - CAL_chA_calibration;
+	AR_bufferChB[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE] = ((sample>>16)&0xffff)*2.5/65536;// - CAL_chB_calibration;
 
-//#!  Low pass filter iir? Uncomment the next two lines
-	AR_bufferChA[AR_bufferIndex%(MAX_SAMPLES_BUFFER_SIZE)] = iir(AR_bufferChA[AR_bufferIndex%(MAX_SAMPLES_BUFFER_SIZE)], ACoeffs, BCoeffs, IIR_statesChA, TAPS_IIR);
-	AR_bufferChB[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE] = iir(AR_bufferChB[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE], ACoeffs, BCoeffs, IIR_statesChB, TAPS_IIR);
 	
-	
-//	SAMPLES_MEMORY[samples_memory_index%MAXSAMPLES] = sample;
+	//
+	if(OpMode == MODE_IF){
+		signalIIR_bandpassfilter(&AR_bufferChA[AR_bufferIndex%(MAX_SAMPLES_BUFFER_SIZE)],&AR_bufferChB[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE]);
+	}
 
 	AR_bufferIndex++;
 	

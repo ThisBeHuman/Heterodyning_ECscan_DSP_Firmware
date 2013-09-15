@@ -93,6 +93,12 @@ int USB_processPayload(unsigned short payload_size, unsigned char * payload_buff
 			
 			processDriverEn(payload_size, payload_buffer);
 			break;
+		case USB_MSG_OPMODE:
+//			printf("payload size:%d\n",payload_size);
+			if(payload_size != USB_MSG_OPMODE_SIZE) return USB_WRONG_CMD_SIZE;
+			
+			processOpMode(payload_size, payload_buffer);
+			break;
 		default:
 			return USB_ERROR_FLAG;
 		
@@ -331,7 +337,7 @@ int processADCStopSampling(unsigned short msg_size, unsigned char * msg_buffer)
 			return USB_WRONG_CMD;
 	}
 	 
-	DRIVER_DISABLE;
+//	DRIVER_DISABLE;
 	ADC_StopSampling();
 
 	process_sendAcknowledge(msg_buffer[0]);
@@ -372,8 +378,8 @@ int processCalibrate(unsigned short msg_size, unsigned char * msg_buffer)
 	CAL_chA_calibration=0;
 	CAL_chB_calibration=0;
 	// #! 3 samples 10us, single acquisition
-	Init_IIR_soft();
-	ADC_StartSampling(4000, 7, 0);
+	//Init_IIR_soft();
+	ADC_StartSampling(4000, 10, 0);
 //	while(~AR_finishedFlag);
 	for(i=0;i<1;i++);
 	CAL_calibrateFlag = TRUE;
@@ -545,6 +551,43 @@ int processDriverEn(unsigned short msg_size, unsigned char * msg_buffer)
 		DRIVER_DISABLE ;
 	}else{
 		DRIVER_ENABLE;
+	}			
+	process_sendAcknowledge(msg_buffer[0]);
+
+	return TRUE;
+}
+
+
+/************************************************************
+	Function:	int processOpMode (unsigned short msg_size, unsigned char * msg_buffer)
+	Argument:	unsigned short msg_size - Payload message size for confirmation
+ 				unsigned char * msg_buffer - Payload buffer with message to process
+	Return:		TRUE if message has been processed without errors.
+				USB_ERROR_FLAG if there was an error
+			
+			
+	Description: Changes operation mode to IF or IQ
+		
+	Extra:	
+			byte OpMode
+			
+************************************************************/
+int processOpMode(unsigned short msg_size, unsigned char * msg_buffer)
+{
+	int temp;	
+	// Checks if this message corresponds to a Change Frequency command
+	if(msg_size != USB_MSG_OPMODE_SIZE 
+		&& msg_buffer[0] != USB_MSG_OPMODE) {
+			printf("error OpMode EN!\n");//#!
+			return USB_WRONG_CMD;
+	}
+	temp = msg_buffer[1]& 0xff;
+	printf("OpMode %s\n", temp? "IF":"IQ");
+
+	if(temp == MODE_IF){
+		OpMode = MODE_IF ;
+	}else{
+		OpMode = MODE_IQ ;
 	}			
 	process_sendAcknowledge(msg_buffer[0]);
 

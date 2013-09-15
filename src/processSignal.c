@@ -38,12 +38,160 @@ extern float memSamplesBufferChB[];
 extern float memProcessedBufferChB[];
 
 
-int Init_IIR_soft(){
+
+
+
+/************************************************************
+	Function:	int signalIIR_bandpassfilter (float* sampleA_ptr,float* sampleB_ptr)
+	Argument:	Pointer to current samples in the sample buffer
+	
+	Return:	
+	
+	Description: Processes samples A and B through the band pass filter.
+		
+	Extra:	
+
+************************************************************/
+int signalIIR_bandpassfilter(float* sampleA_ptr,float* sampleB_ptr)
+{
+
+//	*sampleA_ptr = iir(*sampleA_ptr, BP_ACoeffs, BP_BCoeffs, IIR_BPstatesChA, TAPS_IIR);
+//	*sampleB_ptr = iir(*sampleB_ptr, BP_ACoeffs, BP_BCoeffs, IIR_BPstatesChB, TAPS_IIR);
+
+	*sampleA_ptr = fir(*sampleA_ptr, BP_FIR_coeffs, FIR_BPstatesChA, TAPS_FIR);
+	*sampleB_ptr = fir(*sampleB_ptr, BP_FIR_coeffs, FIR_BPstatesChB, TAPS_FIR);
+	
+	return 0;	
+}
+
+/************************************************************
+	Function:	int signalIIR_lowpassfilter (float* sampleA_ptr,float* sampleB_ptr)
+	Argument:	Pointer to current samples in the sample buffer
+	
+	Return:	
+	
+	Description: Processes samples A and B through the low pass filter.
+		
+	Extra:	
+
+************************************************************/
+int signalIIR_lowpassfilter(float* sampleA_ptr,float* sampleB_ptr)
+{
+
+//	*sampleA_ptr = iir(*sampleA_ptr, LP_ACoeffs, LP_BCoeffs, IIR_LPstatesChA, TAPS_IIR);
+//	*sampleB_ptr = iir(*sampleB_ptr, LP_ACoeffs, LP_BCoeffs, IIR_LPstatesChB, TAPS_IIR);
+
+	*sampleA_ptr = fir(*sampleA_ptr, LP_FIR_coeffs, FIR_LPstatesChA, TAPS_FIR_LP);
+	*sampleB_ptr = fir(*sampleB_ptr, LP_FIR_coeffs, FIR_LPstatesChB, TAPS_FIR_LP);
+
+	
+	return 0;	
+}
+
+
+/************************************************************
+	Function:	int signal_QuadratureDemodulation (float* bufferA,float* bufferB, int total_samples)
+	Argument:	
+	
+	Return:	
+	
+	Description: Processes the quadrature demodulation of the IF mode.
+		
+	Extra:	
+
+************************************************************/
+int signal_QuadratureDemodulation (float* bufferA,float* bufferB, int total_samples)
+{
+
+	int index = 0;
+	float sampleA;
+	float sampleB;
+	float sampleC;
+	static float aux[MAX_SAMPLES_BUFFER_SIZE];
+
+	
+//	Init_IIR_LPsoft();
+
+	for (index = 0; index<total_samples;index++){
+		aux[index]=bufferB[(total_samples+index-SWEEP_SAMPLES_90DEGREE)%total_samples];
+		
+	}
+	for (index = 0; index < total_samples; index++){
+		sampleA = bufferA[index];
+		sampleB = bufferB[index];
+		sampleC = aux[index];
+		bufferA[index]=sampleA*sampleB;
+		bufferB[index]=sampleA*sampleC;
+		
+		
+		
+		
+	//	signalIIR_lowpassfilter(&bufferA[index],&bufferB[index]);
+	//	bufferA[index]=iir(sampleA*sampleB, LP_ACoeffs, LP_BCoeffs, IIR_LPstatesChA, TAPS_IIR);		
+	//	bufferB[index]=iir(sampleA*sampleC, LP_ACoeffs, LP_BCoeffs, IIR_LPstatesChB, TAPS_IIR);		
+	//	bufferB[index]=sampleA*sampleC;
+	}
+	for (index = 0; index < total_samples; index++){
+		signalIIR_lowpassfilter(&bufferB[index],&bufferA[index]);
+
+//		bufferB[index]=fir(bufferA[index], LP_FIR_coeffs, FIR_LPstatesChB, TAPS_FIR_LP);
+//		bufferA[index]=fir(bufferB[index], LP_FIR_coeffs, FIR_LPstatesChA, TAPS_FIR_LP);
+	}
+	return 0;	
+}
+
+/************************************************************
+	Function:	int signal_Calibrate (float* bufferA,float* bufferB, int total_samples)
+	Argument:	
+	
+	Return:	
+	
+	Description: Calibrates buffer A and buffer B with the calibration
+			values stored in memory
+		
+	Extra:	
+
+************************************************************/
+int signal_Calibrate (float* bufferA,float* bufferB, int total_samples)
+{
+	int index=0;
+	
+	for(index=0;index<total_samples;index++){
+		bufferA[index]=bufferA[index]-CAL_chA_calibration;
+		bufferB[index]=bufferB[index]-CAL_chB_calibration;
+
+	}
+
+	
+	return 0;
+}
+
+int Init_IIR_LPsoft(){
 	
 	int i;
 	for (i=0; i<TAPS_IIR+1; i++) {
-		IIR_statesChA[i] = 0.0;
-		IIR_statesChB[i] = 0.0;
+		IIR_LPstatesChA[i] = 0.0;
+		IIR_LPstatesChB[i] = 0.0;
+	}
+}
+
+
+
+int Init_IIR_BPsoft(){
+	
+	int i;
+	for (i=0; i<TAPS_IIR+1; i++) {
+		IIR_BPstatesChA[i] = 0.0;
+		IIR_BPstatesChB[i] = 0.0;
+	}
+}
+
+int Init_FIR_BPsoft(){
+	
+	int i;
+	for (i=0; i<TAPS_FIR+1; i++) {
+		FIR_BPstatesChA[i] = 0.0;
+		FIR_BPstatesChB[i] = 0.0;
 	}
 }
 
