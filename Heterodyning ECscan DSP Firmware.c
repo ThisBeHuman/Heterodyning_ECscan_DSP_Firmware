@@ -410,16 +410,17 @@ void main( void )
 				//iir(AR_bufferChB,memProcessedBufferChB, IIR_coeffs, IIR_states,adc_number_of_samples_to_send,0);				
 				
 				if(OpMode == MODE_IF){	
-					signal_QuadratureDemodulation(AR_bufferChA,AR_bufferChB,AR_bufferIndex);
+			//		signal_QuadratureDemodulation(AR_bufferChA,AR_bufferChB,AR_bufferIndex);
+					signal_QuadratureDemodulation_InternalLO(AR_bufferChA,AR_bufferChB,AR_bufferIndex);
 				}
 				if(CAL_calibrateFlag){			
 
-					CAL_chA_calibration = (AR_bufferChA[3310]+AR_bufferChA[3511]+AR_bufferChA[3102])/3;
-					CAL_chB_calibration = (AR_bufferChB[3310]+AR_bufferChB[3511]+AR_bufferChB[3102])/3;
-					CAL_calibrateFlag = FALSE;
-					printf("cal chA: %f, chB: %f\n",CAL_chA_calibration,CAL_chB_calibration);
+			//		CAL_chA_calibration = (AR_bufferChA[3310]+AR_bufferChA[3511]+AR_bufferChA[3102])/3;
+			//		CAL_chB_calibration = (AR_bufferChB[3310]+AR_bufferChB[3511]+AR_bufferChB[3102])/3;
+			//		CAL_calibrateFlag = FALSE;
+			//		printf("cal chA: %f, chB: %f\n",CAL_chA_calibration,CAL_chB_calibration);
 				}else{
-					signal_Calibrate(AR_bufferChA,AR_bufferChB,AR_bufferIndex);
+				//	signal_Calibrate(AR_bufferChA,AR_bufferChB,AR_bufferIndex);
 					process_sendSampleData(AR_bufferIndex,(unsigned int*)AR_bufferChA,(unsigned int*)AR_bufferChB);
 
 				}

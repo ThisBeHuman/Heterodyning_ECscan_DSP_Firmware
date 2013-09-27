@@ -148,26 +148,37 @@ int processDDSChangeFreq(unsigned short msg_size, unsigned char * msg_buffer)
 	DDS1_Freq |= msg_buffer[2] <<16;
 	DDS1_Freq |= msg_buffer[3] <<8;
 	DDS1_Freq |= msg_buffer[4];
-	DDS1_Freq = DDS1_Freq * DDS_FREQUENCY_MULTIPLIER;
+//	DDS1_Freq = DDS1_Freq * DDS_FREQUENCY_MULTIPLIER;
+// Converted to floats and rounded
+	DDS1_frequency = DDS1_Freq = (int) DDS1_Freq * DDS_FREQUENCY_MULTIPLIER_FLOAT;
+	DDS_inc_Fex = DDS1_Freq;
 	
-	DDS1_Phase = msg_buffer[5]&0x1f;
+	DDS1_phase = DDS1_Phase = msg_buffer[5]&0x1f;
 
 		// DDS 2 Frequency
 	DDS2_Freq = msg_buffer[6] <<24;
 	DDS2_Freq |= msg_buffer[7] <<16;
 	DDS2_Freq |= msg_buffer[8] <<8;
 	DDS2_Freq |= msg_buffer[9];
-	DDS2_Freq = DDS2_Freq * DDS_FREQUENCY_MULTIPLIER;
+//	DDS2_Freq = DDS2_Freq * DDS_FREQUENCY_MULTIPLIER;
+// Converted to floats and rounded
+	DDS2_frequency = DDS2_Freq = (int) DDS2_Freq * DDS_FREQUENCY_MULTIPLIER_FLOAT;
+	DDS_inc_Flo = DDS2_Freq;
 	
-	DDS2_Phase = msg_buffer[10]&0x1f;
+	
+	DDS2_phase = DDS2_Phase = msg_buffer[10]&0x1f;
 
 		// DDS 3 Frequency
 	DDS3_Freq = msg_buffer[11] <<24;
 	DDS3_Freq |= msg_buffer[12] <<16;
 	DDS3_Freq |= msg_buffer[13] <<8;
 	DDS3_Freq |= msg_buffer[14];
-	DDS3_Freq = DDS3_Freq * DDS_FREQUENCY_MULTIPLIER;
-	DDS3_Phase = msg_buffer[15]&0x1f;
+//	DDS3_Freq = DDS3_Freq * DDS_FREQUENCY_MULTIPLIER;
+// Converted to floats and rounded
+	DDS3_frequency = DDS3_Freq = (int) DDS3_Freq * DDS_FREQUENCY_MULTIPLIER_FLOAT;
+
+	
+	DDS3_phase = DDS3_Phase = msg_buffer[15]&0x1f;
 	
 	// Reconfigure the DDS.
 
@@ -176,6 +187,8 @@ int processDDSChangeFreq(unsigned short msg_size, unsigned char * msg_buffer)
 		DDS_init();
 		DDS_init();
 
+		printf("DDS %f 1: %d, 2: %d, 3: %d\n",DDS_FREQUENCY_MULTIPLIER_FLOAT, DDS1_Freq, DDS2_Freq, DDS3_Freq);
+		
 		DDS_WriteData(DDS1_Freq, DDS1_Phase, 0, DDS_ch1);
 		DDS_WriteData(DDS2_Freq, DDS2_Phase, 0, DDS_ch2);
 		DDS_WriteData(DDS3_Freq, DDS3_Phase, 0, DDS_ch3);

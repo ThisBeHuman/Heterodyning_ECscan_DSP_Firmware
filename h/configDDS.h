@@ -101,6 +101,13 @@ Dphase = (Fout*2^32)/SystemClock
 //#define DDS_FREQUENCY_MULTIPLIER	143	// For 30 MHz oscillator
 #define DDS_FREQUENCY_MULTIPLIER	36	// For 30 MHz oscillator
 
+#define ADC_FS	100000
+
+#define DDS_SYSTEMCLOCK 1200*ADC_FS
+#define DDS_FREQUENCY_MULTIPLIER_FLOAT 35.7913941333//	2^32/DDS_SYSTEMCLOCK
+
+
+
 //#define DDS_FREQUENCY_MULTIPLIER	24	// For 180 MHz oscillator
 
 

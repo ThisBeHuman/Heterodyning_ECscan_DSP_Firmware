@@ -87,7 +87,7 @@
 #define MAXSAMPLES		8192
 #define ADC_SPORT_CLK_DIV	0x00000002
 
-#define TICKS_PER_uSEC	99
+#define TICKS_PER_uSEC	100
 #define CNV_uSEC		10
 
 #define PCG_CLKD_DIVIDER 1

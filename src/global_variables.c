@@ -27,7 +27,7 @@ float *AR_bufferChA=memSamplesBufferChA;
 float *AR_bufferChB=memSamplesBufferChB;
 
 unsigned char AR_continuousSampling=0;
-char OpMode = MODE_IQ;
+char OpMode = MODE_IF;
 
 bool DSP_processingFIR =0;
 
@@ -39,6 +39,8 @@ float CAL_chA_calibration=0;
 float CAL_chB_calibration=0;
 bool 	CAL_calibrateFlag=0;
 
+
+// Digital Filter Variables and memory allocation
 float dm IIR_BPstatesChA[TAPS_IIR+1];
 float dm IIR_BPstatesChB[TAPS_IIR+1];
 float dm IIR_LPstatesChA[TAPS_IIR+1];
@@ -86,9 +88,15 @@ float  pm IIR_coeffs[2*TAPS_IIR] =
 };
 
 
+
+
+
+
 #pragma section("seg_pmda") 
 //unsigned int memSamplesBuffer1[MAX_SAMPLES_BUFFER_SIZE];
 //unsigned int memSamplesBuffer2[MAX_SAMPLES_BUFFER_SIZE];
+
+// Sampling buffers memory allocation
 
 float memSamplesBufferChA[MAX_SAMPLES_BUFFER_SIZE];
 float memSamplesBufferChB[MAX_SAMPLES_BUFFER_SIZE];
@@ -103,12 +111,21 @@ float memIIRcoeff[] = {
 	};
 	
 	
+// Internal DDS Variables and memory allocation
 
+unsigned int DDS_inc_Fex;
+unsigned int DDS_inc_Flo;
 
+float sine_values_lut[] = {
+	#include "sine4096.txt"	
+	
+};
 	
 	
-float memProcessedBufferChA[MAX_SAMPLES_BUFFER_SIZE];
-float memProcessedBufferChB[MAX_SAMPLES_BUFFER_SIZE];
+//float memProcessedBufferChA[MAX_SAMPLES_BUFFER_SIZE];
+//float memProcessedBufferChB[MAX_SAMPLES_BUFFER_SIZE];
+
+// USB Buffers memory allocation
 
 unsigned char USB_PAYLOAD_BUFFER[USB_MAX_PAYLOAD_SIZE];
 unsigned char USB_ACK_BUFFER[USB_MAX_ACK_SIZE];

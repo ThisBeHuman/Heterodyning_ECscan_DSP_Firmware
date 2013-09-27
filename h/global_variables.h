@@ -27,7 +27,7 @@
 
 #define TAPS_IIR 2
 #define TAPS_FIR 159
-#define TAPS_FIR_LP 273
+#define TAPS_FIR_LP 153
 
 #define MAX_SAMPLES_BUFFER_SIZE 8192
 #define USB_MAX_PAYLOAD_SIZE	300
@@ -45,6 +45,12 @@ extern unsigned int AR_bufferIndex;
 extern float *AR_bufferChA;
 extern float *AR_bufferChB;
 
+// DC decimal values of the ADC inputs when there is no signal present.
+#define CAL_CHA_DECIMAL	27420
+#define CAL_CHB_DECIMAL 27830
+
+
+// IF IQ Operation mode
 extern char OpMode;
 
 
@@ -82,6 +88,15 @@ extern float dm FIR_BPstatesChB[TAPS_FIR];
 extern float pm LP_FIR_coeffs[TAPS_FIR_LP];
 extern float dm FIR_LPstatesChA[TAPS_FIR_LP];
 extern float dm FIR_LPstatesChB[TAPS_FIR_LP];
+
+
+
+// Internal DDS Variables and memory allocation
+#define SINE_VALUES_SIZE 4096
+#define SINE_VALUES_90_DELAY 1024
+extern unsigned int DDS_inc_Fex;
+extern unsigned int DDS_inc_Flo;
+extern float sine_values_lut[];
 
 
 

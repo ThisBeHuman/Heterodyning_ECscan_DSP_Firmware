@@ -303,18 +303,32 @@ void ADC_init(unsigned int sample_period)
     *pDAI_IRPTL_PRI |= SRU_EXTMISCB0_INT;
     *pDAI_IRPTL_RE |= SRU_EXTMISCB0_INT;
 */    
-
-	
-	*pPCG_PW2 = ((sample_period*PCG_TICKS_PER_uSEC)-1)<<16;
-	//*pPCG_SYNC1 = 0;	
-	*pPCG_CTLD1 = PCG_CLKD_DIVIDER; 
-	*pPCG_CTLD0 =  (sample_period*PCG_TICKS_PER_uSEC) | ENFSD | ENCLKD ;
-
-			
-
     // Interrupt Dispatchers
    	interrupts(SIG_P0,IRQ_ADC_SampleReady);
     interruptf(SIG_SP3,IRQ_ADC_SampleDone);
+
+	DDS_init();
+	DDS_init();
+	DDS_WriteData(DDS1_frequency, DDS1_phase, 0, DDS_ch1);
+	DDS_WriteData(DDS2_frequency, DDS2_phase, 0, DDS_ch2);
+	DDS_WriteData(DDS3_frequency, DDS3_phase, 0, DDS_ch3);
+		
+//	DDS_update_frequency();	
+//	*pPCG_SYNC2 = CLKD_SOURCE_IOP;//|FSD_SOURCE_IOP|CLKD_SYNC;
+
+//	*pPCG_PW2 = ((sample_period*PCG_TICKS_PER_uSEC)-1)<<16;
+
+	//*pPCG_SYNC1 = 0;	
+	*pPCG_CTLD1 = PCG_CLKD_DIVIDER; 
+//	*pPCG_CTLD0 =  (sample_period*PCG_TICKS_PER_uSEC) | ENFSD | ENCLKD ;
+//	*pPCG_PW2 = ((sample_period*PCG_TICKS_PER_uSEC)-1)<<16;
+	
+	DDS_update_frequency();	
+	*pPCG_CTLD0 =  250 | ENFSD | ENCLKD ;
+//	*pPCG_CTLD0 =  (1*PCG_TICKS_PER_uSEC) | ENFSD | ENCLKD ;
+
+//printf("ticks: %d\n",sample_period*	PCG_TICKS_PER_uSEC);		
+
 //#!	interrupts(SIG_GPTMR0, IRQ_ADC_AssertConversion);
     
     // Configure and enable SPORT 3.
@@ -558,7 +572,7 @@ void IRQ_ADC_SampleDone(int sig_int)
 	//*pSPCTL4 = 0;
 	unsigned int k,i,sample;
 	 float a1,a2,a3;
-	
+	int a,b;
 	//for(i=0; i<4;i++);
 	
 	// Waits for sample in the SPORT buffer
@@ -573,14 +587,17 @@ void IRQ_ADC_SampleDone(int sig_int)
 	
 	// Saves to current Acquisition Run samples buffer memory
 //	AR_buffer[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE] = sample;
-	
-	AR_bufferChA[AR_bufferIndex%(MAX_SAMPLES_BUFFER_SIZE)] = (sample&0xffff)*2.5/65536;// - CAL_chA_calibration;
-	AR_bufferChB[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE] = ((sample>>16)&0xffff)*2.5/65536;// - CAL_chB_calibration;
+//	a = (sample&0xffff);
+//	b = ((sample>>16)&0xffff);
+//	printf("cha A: %d, chB, %d\n",a,b);
+
+	AR_bufferChB[AR_bufferIndex%(MAX_SAMPLES_BUFFER_SIZE)] = (((int)sample&0xffff)-CAL_CHA_DECIMAL)*2.5/65536;// - CAL_chA_calibration;
+	AR_bufferChA[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE] = (((int)(sample>>16)&0xffff)-CAL_CHB_DECIMAL)*2.5/65536;// - CAL_chB_calibration;
 
 	
 	//
 	if(OpMode == MODE_IF){
-		signalIIR_bandpassfilter(&AR_bufferChA[AR_bufferIndex%(MAX_SAMPLES_BUFFER_SIZE)],&AR_bufferChB[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE]);
+//		signalIIR_bandpassfilter(&AR_bufferChA[AR_bufferIndex%(MAX_SAMPLES_BUFFER_SIZE)],&AR_bufferChB[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE]);
 	}
 
 	AR_bufferIndex++;

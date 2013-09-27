@@ -36,7 +36,7 @@ RM=cmd /C del /F /Q
 
 ifeq ($(MAKECMDGOALS),HeterodyningECscanDSPFirmware_Debug)
 
-HeterodyningECscanDSPFirmware_Debug : ./Debug/HeterodyningECscanDSPFirmware.dxe 
+HeterodyningECscanDSPFirmware_Debug : ./Debug/HeterodyningECscanDSPFirmware.ldr 
 
 ./Debug/configADC.doj :src/configADC.c h/configADC.h h/general.h $(VDSP)/214xx/include/Cdef21489.h $(VDSP)/214xx/include/def21489.h $(VDSP)/214xx/include/stdio.h $(VDSP)/214xx/include/stdio_21xxx.h $(VDSP)/214xx/include/stdbool.h $(VDSP)/214xx/include/yvals.h $(VDSP)/214xx/include/sysreg.h $(VDSP)/214xx/include/signal.h $(VDSP)/214xx/include/sru.h $(VDSP)/214xx/include/sru21489.h $(VDSP)/214xx/include/math.h $(VDSP)/214xx/include/math_21xxx.h $(VDSP)/214xx/include/filters.h h/processSignal.h h/configDDS.h h/configUSB.h h/configXY.h h/processPackets.h h/global_variables.h 
 	@echo ".\src\configADC.c"
@@ -58,7 +58,7 @@ HeterodyningECscanDSPFirmware_Debug : ./Debug/HeterodyningECscanDSPFirmware.dxe
 	@echo ".\src\executeNDT.c"
 	$(VDSP)/cc21k.exe -c .\src\executeNDT.c -file-attr ProjectName=HeterodyningECscanDSPFirmware -g -structs-do-not-overlap -no-multiline -double-size-32 -swc -warn-protos -si-revision 0.2 -proc ADSP-21489 -o .\Debug\executeNDT.doj -MM
 
-./Debug/global_variables.doj :src/global_variables.c h/global_variables.h h/general.h $(VDSP)/214xx/include/Cdef21489.h $(VDSP)/214xx/include/def21489.h $(VDSP)/214xx/include/stdio.h $(VDSP)/214xx/include/stdio_21xxx.h $(VDSP)/214xx/include/stdbool.h $(VDSP)/214xx/include/yvals.h $(VDSP)/214xx/include/sysreg.h $(VDSP)/214xx/include/signal.h $(VDSP)/214xx/include/sru.h $(VDSP)/214xx/include/sru21489.h $(VDSP)/214xx/include/math.h $(VDSP)/214xx/include/math_21xxx.h $(VDSP)/214xx/include/filters.h h/processSignal.h h/configADC.h h/configDDS.h h/configUSB.h h/configXY.h h/processPackets.h iir_bp1khz_acoeffs.dat iir_bp1khz_bcoeffs.dat iir_lp1hz_acoeffs.dat iir_lp1hz_bcoeffs.dat fir_coeff.dat fir_coeff_LP.dat iir_coeffs.dat fir_coeff1s.dat iir_coeff.dat 
+./Debug/global_variables.doj :src/global_variables.c h/global_variables.h h/general.h $(VDSP)/214xx/include/Cdef21489.h $(VDSP)/214xx/include/def21489.h $(VDSP)/214xx/include/stdio.h $(VDSP)/214xx/include/stdio_21xxx.h $(VDSP)/214xx/include/stdbool.h $(VDSP)/214xx/include/yvals.h $(VDSP)/214xx/include/sysreg.h $(VDSP)/214xx/include/signal.h $(VDSP)/214xx/include/sru.h $(VDSP)/214xx/include/sru21489.h $(VDSP)/214xx/include/math.h $(VDSP)/214xx/include/math_21xxx.h $(VDSP)/214xx/include/filters.h h/processSignal.h h/configADC.h h/configDDS.h h/configUSB.h h/configXY.h h/processPackets.h iir_bp1khz_acoeffs.dat iir_bp1khz_bcoeffs.dat iir_lp1hz_acoeffs.dat iir_lp1hz_bcoeffs.dat fir_coeff.dat fir_coeff_LP.dat iir_coeffs.dat fir_coeff1s.dat iir_coeff.dat sine4096.txt 
 	@echo ".\src\global_variables.c"
 	$(VDSP)/cc21k.exe -c .\src\global_variables.c -file-attr ProjectName=HeterodyningECscanDSPFirmware -g -structs-do-not-overlap -no-multiline -double-size-32 -swc -warn-protos -si-revision 0.2 -proc ADSP-21489 -o .\Debug\global_variables.doj -MM
 
@@ -82,6 +82,10 @@ HeterodyningECscanDSPFirmware_Debug : ./Debug/HeterodyningECscanDSPFirmware.dxe
 	@echo "Linking..."
 	$(VDSP)/cc21k.exe .\Debug\configADC.doj .\Debug\configDDS.doj .\Debug\configUSB.doj .\Debug\configXY.doj .\Debug\executeNDT.doj .\Debug\global_variables.doj .\Debug\Heterodyning\ ECscan\ DSP\ Firmware.doj .\Debug\initPLL_SDRAM.doj .\Debug\processPackets.doj .\Debug\processSignal.doj -T .\Heterodyning\ ECscan\ DSP\ Firmware.ldf -flags-link -ip -L .\Debug -add-debug-libpaths -swc -flags-link -od,.\Debug -o .\Debug\HeterodyningECscanDSPFirmware.dxe -proc ADSP-21489 -si-revision 0.2 -flags-link -MM
 
+./Debug/HeterodyningECscanDSPFirmware.ldr :./Debug/HeterodyningECscanDSPFirmware.dxe $(VDSP)/214xx/ldr/489_spi.dxe 
+	@echo "Creating loader file..."
+	$(VDSP)/elfloader.exe -bspiflash -fHEX -HostWidth8 -l $(VDSP)\214xx\ldr\489_spi.dxe .\Debug\HeterodyningECscanDSPFirmware.dxe -o .\Debug\HeterodyningECscanDSPFirmware.ldr -si-revision 0.2 -proc ADSP-21489 -MM
+
 endif
 
 ifeq ($(MAKECMDGOALS),HeterodyningECscanDSPFirmware_Debug_clean)
@@ -98,6 +102,7 @@ HeterodyningECscanDSPFirmware_Debug_clean:
 	-$(RM) ".\Debug\processPackets.doj"
 	-$(RM) ".\Debug\processSignal.doj"
 	-$(RM) ".\Debug\HeterodyningECscanDSPFirmware.dxe"
+	-$(RM) ".\Debug\HeterodyningECscanDSPFirmware.ldr"
 	-$(RM) ".\Debug\*.ipa"
 	-$(RM) ".\Debug\*.opa"
 	-$(RM) ".\Debug\*.ti"

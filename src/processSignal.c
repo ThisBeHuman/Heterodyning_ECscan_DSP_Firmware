@@ -88,6 +88,60 @@ int signalIIR_lowpassfilter(float* sampleA_ptr,float* sampleB_ptr)
 	return 0;	
 }
 
+/************************************************************
+	Function:	int signal_QuadratureDemodulation_InternalLO (float* bufferA,float* bufferB, int total_samples)
+	Argument:	
+	
+	Return:	
+	
+	Description: Processes the quadrature demodulation of the IF mode using an internal local oscillator
+		and the samples from channel A corresponding to the probe response data.
+		
+	Extra:	
+
+************************************************************/
+int signal_QuadratureDemodulation_InternalLO (float* bufferA,float* bufferB, int total_samples)
+{
+
+	int index = 0;
+	float sampleA;
+	float sampleB;
+	float sampleC;
+//	static float aux[MAX_SAMPLES_BUFFER_SIZE];
+
+	// internal local oscillator incrementation
+	unsigned int inc_ilo = (DDS_inc_Fex - DDS_inc_Flo)*1200;// >> 20;
+	
+	unsigned int inc_ilo_accA = 0;
+//	unsigned int inc_ilo_accB = SINE_VALUES_SIZE/4;
+	
+	for (index = 0; index<total_samples;index++){
+		sampleA = bufferA[index];
+
+		// Sample * Sine
+		bufferB[index] = 4*sampleA*sine_values_lut[((inc_ilo_accA>>20))];
+
+//		bufferB[index] = 1*sine_values_lut[((inc_ilo_accA>>20)%SINE_VALUES_SIZE)];
+
+
+		// Sample * CoSine
+		bufferA[index] = 4*sampleA*sine_values_lut[((inc_ilo_accA>>20)+SINE_VALUES_90_DELAY)%SINE_VALUES_SIZE];
+
+		inc_ilo_accA = inc_ilo_accA + inc_ilo;
+
+		//inc_ilo_accB = ((inc_ilo_accA + inc_ilo))+SINE_VALUES_SIZE/4)%SINE_VALUES_SIZE;
+	//	printf("inc: %d\n", inc_ilo_accA>>20);	
+	}
+	
+	for (index = 0; index < total_samples; index++){
+		signalIIR_lowpassfilter(&bufferA[index], &bufferB[index]);
+
+	}	
+	
+	return 0;	
+}
+
+
 
 /************************************************************
 	Function:	int signal_QuadratureDemodulation (float* bufferA,float* bufferB, int total_samples)
