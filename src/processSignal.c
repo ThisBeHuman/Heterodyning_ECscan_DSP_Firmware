@@ -142,6 +142,55 @@ int signal_QuadratureDemodulation_InternalLO (float* bufferA,float* bufferB, int
 }
 
 
+/************************************************************
+	Function:	int signal_QuadratureDemodulation_InternalLO_PtbyPt (float* bufferA,float* bufferB, int total_samples)
+	Argument:	
+	
+	Return:	
+	
+	Description: Processes the quadrature demodulation of the IF mode using an internal local oscillator
+		and the samples from channel A corresponding to the probe response data.
+		This demodulation occurs in run time during acquisition
+		It assumes iDDS_lut_inc and iDDS_lut_acc were set.
+	Extra:	
+
+************************************************************/
+int signal_QuadratureDemodulation_InternalLO_PtbyPt (float* bufferA,float* bufferB,int index)
+{
+
+	//int index = 0;
+	float sampleA;
+	float sampleB;
+	float sampleC;
+//	static float aux[MAX_SAMPLES_BUFFER_SIZE];
+
+
+//	unsigned int inc_ilo_accB = SINE_VALUES_SIZE/4;
+	
+		sampleA = bufferA[index];
+
+		// Sample * Sine
+		//Imaginary
+		bufferB[index] = 4*sampleA*sine_values_lut[((iDDS_lut_acc>>20))];
+
+//		bufferB[index] = 1*sine_values_lut[((inc_ilo_accA>>20)%SINE_VALUES_SIZE)];
+
+
+		// Sample * CoSine
+		// Real values
+		bufferA[index] = 4*sampleA*sine_values_lut[((iDDS_lut_acc>>20)+SINE_VALUES_90_DELAY)%SINE_VALUES_SIZE];
+
+		iDDS_lut_acc = iDDS_lut_acc + iDDS_lut_inc;
+
+		//inc_ilo_accB = ((inc_ilo_accA + inc_ilo))+SINE_VALUES_SIZE/4)%SINE_VALUES_SIZE;
+	//	printf("inc: %d\n", inc_ilo_accA>>20);	
+		signalIIR_lowpassfilter(&bufferA[index], &bufferB[index]);
+
+	
+	return 0;	
+}
+
+
 
 /************************************************************
 	Function:	int signal_QuadratureDemodulation (float* bufferA,float* bufferB, int total_samples)

@@ -313,6 +313,13 @@ void ADC_init(unsigned int sample_period)
 	DDS_WriteData(DDS2_frequency, DDS2_phase, 0, DDS_ch2);
 	DDS_WriteData(DDS3_frequency, DDS3_phase, 0, DDS_ch3);
 		
+	// updates the internal DDS lut increment for the specified frequency
+	iDDS_lut_inc = (DDS_inc_Fex - DDS_inc_Flo)*1200;
+	// Resets the internal DDS lut accumulator
+	iDDS_lut_acc = 0;
+	
+	
+	
 //	DDS_update_frequency();	
 //	*pPCG_SYNC2 = CLKD_SOURCE_IOP;//|FSD_SOURCE_IOP|CLKD_SYNC;
 
@@ -591,13 +598,18 @@ void IRQ_ADC_SampleDone(int sig_int)
 //	b = ((sample>>16)&0xffff);
 //	printf("cha A: %d, chB, %d\n",a,b);
 
-	AR_bufferChB[AR_bufferIndex%(MAX_SAMPLES_BUFFER_SIZE)] = (((int)sample&0xffff)-CAL_CHA_DECIMAL)*2.5/65536;// - CAL_chA_calibration;
+	
+	//#! Changed for iDDS run time demodulation
 	AR_bufferChA[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE] = (((int)(sample>>16)&0xffff)-CAL_CHB_DECIMAL)*2.5/65536;// - CAL_chB_calibration;
 
-	
-	//
+	// In IF Mode only Channel A is needed.
+	// In IQ Mode both ADC channels are used.
 	if(OpMode == MODE_IF){
+		signal_QuadratureDemodulation_InternalLO_PtbyPt(AR_bufferChA,AR_bufferChB,AR_bufferIndex);
 //		signalIIR_bandpassfilter(&AR_bufferChA[AR_bufferIndex%(MAX_SAMPLES_BUFFER_SIZE)],&AR_bufferChB[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE]);
+	}else{
+		AR_bufferChB[AR_bufferIndex%(MAX_SAMPLES_BUFFER_SIZE)] = (((int)sample&0xffff)-CAL_CHA_DECIMAL)*2.5/65536;// - CAL_chA_calibration;
+		
 	}
 
 	AR_bufferIndex++;

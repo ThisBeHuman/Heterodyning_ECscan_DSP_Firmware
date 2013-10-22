@@ -31,6 +31,13 @@ char OpMode = MODE_IF;
 
 bool DSP_processingFIR =0;
 
+// Move XY speed global variables
+int move_x_speed = 300000;
+int move_y_speed = 300000;
+
+// Sweep mode to flag sweeping operation and allow samples to be sent through usb while stepping
+char SweepMode = FALSE;
+char SweepMode_Flag_StepDone = FALSE;
 
 //unsigned int * current_memSamplesBuffer = memSamplesBuffer1;
 unsigned int current_memSamplesBuffer_index = 0;
@@ -116,6 +123,9 @@ float memIIRcoeff[] = {
 unsigned int DDS_inc_Fex;
 unsigned int DDS_inc_Flo;
 
+// internal DDS look up table increment and accumulator for the running frequency. Updated by ADC start sampling and read by ADC_sampleDone
+unsigned int iDDS_lut_inc;
+unsigned int iDDS_lut_acc;
 float sine_values_lut[] = {
 	#include "sine4096.txt"	
 	

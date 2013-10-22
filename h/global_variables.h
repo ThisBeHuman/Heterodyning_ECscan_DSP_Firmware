@@ -27,9 +27,9 @@
 
 #define TAPS_IIR 2
 #define TAPS_FIR 159
-#define TAPS_FIR_LP 153
+#define TAPS_FIR_LP 283//153
 
-#define MAX_SAMPLES_BUFFER_SIZE 8192
+#define MAX_SAMPLES_BUFFER_SIZE 8192 // 8192+5
 #define USB_MAX_PAYLOAD_SIZE	300
 #define USB_MAX_ACK_SIZE	10
 #define MODE_IQ 0
@@ -48,6 +48,14 @@ extern float *AR_bufferChB;
 // DC decimal values of the ADC inputs when there is no signal present.
 #define CAL_CHA_DECIMAL	27420
 #define CAL_CHB_DECIMAL 27830
+
+// move XY global speed variables
+extern int move_x_speed;
+extern int move_y_speed;
+
+// Sweep mode to flag sweeping operation and allow samples to be sent through usb while stepping
+extern char SweepMode;
+extern char SweepMode_Flag_StepDone;
 
 
 // IF IQ Operation mode
@@ -97,6 +105,8 @@ extern float dm FIR_LPstatesChB[TAPS_FIR_LP];
 extern unsigned int DDS_inc_Fex;
 extern unsigned int DDS_inc_Flo;
 extern float sine_values_lut[];
+extern unsigned int iDDS_lut_inc;
+extern unsigned int iDDS_lut_acc;
 
 
 

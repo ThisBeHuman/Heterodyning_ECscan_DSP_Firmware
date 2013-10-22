@@ -75,11 +75,12 @@
 //#define MOVE_Y_DELAY 	400000
 
 // +12V stepper driver operation
-#define MOVE_X_DELAY 	300000
-#define MOVE_Y_DELAY 	300000
+//#define MOVE_X_DELAY 	300000
+//#define MOVE_Y_DELAY 	300000
+
 // maximum speed?
-//#define MOVE_X_DELAY 	170000
-//#define MOVE_Y_DELAY 	135000
+#define MOVE_X_DELAY 	180000
+#define MOVE_Y_DELAY 	135000
 
 // Modes of operation definition
 

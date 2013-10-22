@@ -193,7 +193,7 @@ void XY_timer_set (char move_xy)
 	*pTM0STAT = TIM0DIS;
     *pTM0CTL = (TIMODEPWM | PULSE | PRDCNT | IRQEN);
     
-    *pTM0PRD = move_xy ? MOVE_Y_DELAY : MOVE_X_DELAY;
+    *pTM0PRD = move_xy ? move_y_speed : move_x_speed;
     *pTM0W = *pTM0PRD/2;//(CNV_uSEC * TICKS_PER_uSEC-3); // 10% pulse
 	*pTM0STAT = TIM0EN;
 
@@ -219,7 +219,7 @@ void XY_timer_set (char move_xy)
 void X_move(int steps)
 {
 	int i,k;
-	X_ENABLE;
+//	X_ENABLE;
 	XY_timer_set(MOVE_X);
 	for(k=steps; k>0; k--){
 		X_STEP_HIGH;
@@ -232,7 +232,9 @@ void X_move(int steps)
 
 		//for(i=0;i<MOVE_X_DELAY;i++);
 	}
-	X_DISABLE;
+//	X_DISABLE;
+	
+	
 }
 
 /************************************************************
@@ -249,7 +251,7 @@ void X_move(int steps)
 void Y_move(int steps)
 {
 	int i,k;
-	Y_ENABLE;
+//	Y_ENABLE;
 	XY_timer_set(MOVE_Y);
 	
 	for(k=steps; k>0; k--){
@@ -263,6 +265,6 @@ void Y_move(int steps)
 		while(xy_allow_step==FALSE);
 		xy_allow_step=FALSE;
 	}
-	Y_DISABLE;
+//	Y_DISABLE;
 		
 }

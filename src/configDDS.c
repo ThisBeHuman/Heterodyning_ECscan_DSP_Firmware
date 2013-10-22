@@ -287,8 +287,8 @@ void DDS_update_frequency(void){
 		//DDS_FQ_UD_H;	
 		
 	
-	while(SEM_DDS_data_busy);
-	while(((*pDAI_PIN_STAT)& DAI_PB07));
+//	while(SEM_DDS_data_busy);
+//	while(((*pDAI_PIN_STAT)& DAI_PB07));
 		for(k=0;k<100;k++);
 		DDS_FQ_UD_H;
 		for(k=0;k<100;k++);

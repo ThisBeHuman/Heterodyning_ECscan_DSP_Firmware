@@ -3,8 +3,8 @@
 	<!-- Project build target -->
 	<target>
 		<processor revision="Automatic">ADSP-21489</processor>
-		<extension>.ldr</extension>
-		<type>Loader file</type>
+		<extension>.dxe</extension>
+		<type>Executable file</type>
 	</target>
 	<!-- Configurations -->
 	<configurations active="Debug">

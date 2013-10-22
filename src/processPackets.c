@@ -99,6 +99,12 @@ int USB_processPayload(unsigned short payload_size, unsigned char * payload_buff
 			
 			processOpMode(payload_size, payload_buffer);
 			break;
+		case USB_MSG_STEPPER_EN:
+//			printf("payload size:%d\n",payload_size);
+			if(payload_size != USB_MSG_STEPPER_EN_SIZE) return USB_WRONG_CMD_SIZE;
+			
+			processStepperEn(payload_size, payload_buffer);
+			break;
 		default:
 			return USB_ERROR_FLAG;
 		
@@ -187,7 +193,7 @@ int processDDSChangeFreq(unsigned short msg_size, unsigned char * msg_buffer)
 		DDS_init();
 		DDS_init();
 
-		printf("DDS %f 1: %d, 2: %d, 3: %d\n",DDS_FREQUENCY_MULTIPLIER_FLOAT, DDS1_Freq, DDS2_Freq, DDS3_Freq);
+		//printf("DDS %f 1: %d, 2: %d, 3: %d\n",DDS_FREQUENCY_MULTIPLIER_FLOAT, DDS1_Freq, DDS2_Freq, DDS3_Freq);
 		
 		DDS_WriteData(DDS1_Freq, DDS1_Phase, 0, DDS_ch1);
 		DDS_WriteData(DDS2_Freq, DDS2_Phase, 0, DDS_ch2);
@@ -314,6 +320,7 @@ int processADCStartSampling(unsigned short msg_size, unsigned char * msg_buffer)
 	number_of_samples |= msg_buffer[8] <<8;
 	number_of_samples |= msg_buffer[9];
 	
+	SweepMode = msg_buffer[10]&0xff;
 //	DRIVER_ENABLE;
 	ADC_StartSampling(number_of_samples, sampling_period, continuous_sampling);
 	
@@ -455,6 +462,9 @@ int process_sendSampleData(unsigned short sample_size, float * bufferChA, float 
 	unsigned short sendSampleData_header_size=6;
 	
 	float whatfloat[]={0,1,2,3,4};
+	
+	
+	
 	packet_size = sizeof(float);
 	packet_size = 1 + sample_size*2*4;//sizeof(float);
 	payload_size = sample_size+1;
@@ -506,6 +516,7 @@ int processMoveXY(unsigned short msg_size, unsigned char * msg_buffer)
 	char cw_ccw;
 	char half_full;
 	char XY;
+	int speed;
 	// Checks if this message corresponds to a Change Frequency command
 	if(msg_size != USB_MSG_MOVEXY_SIZE 
 		&& msg_buffer[0] != USB_MSG_MOVEXY) {
@@ -517,14 +528,18 @@ int processMoveXY(unsigned short msg_size, unsigned char * msg_buffer)
 	half_full = msg_buffer[2];
 	cw_ccw = msg_buffer[3];
 	steps = (msg_buffer[4]<<24|msg_buffer[5]<<16|msg_buffer[6]<<8 | msg_buffer[7])&0xffffffff;
-//	printf("move: %d %d\n",XY, steps);
+	speed = (msg_buffer[8]<<24|msg_buffer[9]<<16|msg_buffer[10]<<8 | msg_buffer[11])&0xffffffff;
+//	printf("move: %d \n", speed);
 
 	if(XY == MOVE_X){
 		X_init( half_full,  cw_ccw);
+		move_x_speed = speed;
 		X_move(steps);
 	}else if(XY == MOVE_Y){
 		Y_init( half_full,  cw_ccw);
+		move_y_speed = speed;
 		Y_move(steps);	
+		move_y_speed = speed;
 		
 	}
 	process_sendAcknowledge(msg_buffer[0]);
@@ -564,6 +579,43 @@ int processDriverEn(unsigned short msg_size, unsigned char * msg_buffer)
 		DRIVER_DISABLE ;
 	}else{
 		DRIVER_ENABLE;
+	}			
+	process_sendAcknowledge(msg_buffer[0]);
+
+	return TRUE;
+}
+
+/************************************************************
+	Function:	int processStepperEnable (unsigned short msg_size, unsigned char * msg_buffer)
+	Argument:	unsigned short msg_size - Payload message size for confirmation
+ 				unsigned char * msg_buffer - Payload buffer with message to process
+	Return:		TRUE if message has been processed without errors.
+				USB_ERROR_FLAG if there was an error
+			
+			
+	Description: Enables or Disables the stepper
+		
+	Extra:	
+			byte ENABLE/DISABLE
+			
+************************************************************/
+int processStepperEn(unsigned short msg_size, unsigned char * msg_buffer)
+{
+	int temp,stepper;	
+	// Checks if this message corresponds to a Change Frequency command
+	if(msg_size != USB_MSG_STEPPER_EN_SIZE 
+		&& msg_buffer[0] != USB_MSG_STEPPER_EN) {
+			printf("error Stepper EN!\n");//#!
+			return USB_WRONG_CMD;
+	}
+	temp = msg_buffer[1]& 0xff;
+	stepper = msg_buffer[2]& 0xff;
+
+
+	if(temp == 0){
+		if(stepper) Y_DISABLE; else X_DISABLE ;
+	}else{
+		if(stepper) Y_ENABLE ; else X_ENABLE ;
 	}			
 	process_sendAcknowledge(msg_buffer[0]);
 

@@ -278,7 +278,8 @@ void main( void )
 	SRU(HIGH,DPI_PBEN14_I);
 	
 	XY_MOTION_ENABLE;
-	
+	//X_ENABLE;
+//	Y_ENABLE;
 	// Enable DAI interrupt on falling edge of PCG_FS
     //(*pDAI_IRPTL_PRI) = (SRU_EXTMISCA1_INT  | SRU_EXTMISCA2_INT | SRU_EXTMISCB0_INT);    //unmask individual interrupts
     //(*pDAI_IRPTL_RE) = (SRU_EXTMISCA1_INT  | SRU_EXTMISCA2_INT | SRU_EXTMISCB0_INT);    //make sure interrupts latch on the rising edge
@@ -350,7 +351,7 @@ void main( void )
 							if( temp == USB_ERROR_FLAG){
 								printf("USB Error: Error processing payload.\n");
 							}else if(temp == USB_WRONG_CMD_SIZE){
-								printf("USB Error: Wrong Command Size\n",j++);
+								printf("USB Error: Wrong Command Size %d\n", temp);
 							}
 						}	
 					}
@@ -382,7 +383,7 @@ void main( void )
 */
 		
 		if(AR_finishedFlag){
-			SIG_LED1_OFF;
+	//		SIG_LED1_OFF;
 	/*		DSP_ModeIQ_AmplitudePhase(adc_number_of_samples_to_send,adc_buffer_to_send,
 					&memDSPBufferAmplitude[0],&memDSPBufferPhase[0]);
 			
@@ -411,7 +412,8 @@ void main( void )
 				
 				if(OpMode == MODE_IF){	
 			//		signal_QuadratureDemodulation(AR_bufferChA,AR_bufferChB,AR_bufferIndex);
-					signal_QuadratureDemodulation_InternalLO(AR_bufferChA,AR_bufferChB,AR_bufferIndex);
+					//signal_QuadratureDemodulation_InternalLO(AR_bufferChA,AR_bufferChB,AR_bufferIndex);
+					// #! Removed for run time demodulation
 				}
 				if(CAL_calibrateFlag){			
 
@@ -421,8 +423,13 @@ void main( void )
 			//		printf("cal chA: %f, chB: %f\n",CAL_chA_calibration,CAL_chB_calibration);
 				}else{
 				//	signal_Calibrate(AR_bufferChA,AR_bufferChB,AR_bufferIndex);
-					process_sendSampleData(AR_bufferIndex,(unsigned int*)AR_bufferChA,(unsigned int*)AR_bufferChB);
-
+					if (SweepMode == TRUE){
+						
+						// If in sweep mode. Only send last sample of each channel.
+						process_sendSampleData(1,(unsigned int*)&AR_bufferChA[AR_bufferIndex-10],(unsigned int*)&AR_bufferChB[AR_bufferIndex-10]);
+					}else{
+						process_sendSampleData(AR_bufferIndex,(unsigned int*)AR_bufferChA,(unsigned int*)AR_bufferChB);
+					}
 				}
 //				process_sendSampleData(adc_number_of_samples_to_send,(unsigned int*)memProcessedBufferChA,(unsigned int*)AR_bufferChA);//memProcessedBufferChB);
 			
