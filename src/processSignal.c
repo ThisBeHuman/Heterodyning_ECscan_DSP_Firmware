@@ -81,9 +81,13 @@ int signalIIR_lowpassfilter(float* sampleA_ptr,float* sampleB_ptr)
 //	*sampleA_ptr = iir(*sampleA_ptr, LP_ACoeffs, LP_BCoeffs, IIR_LPstatesChA, TAPS_IIR);
 //	*sampleB_ptr = iir(*sampleB_ptr, LP_ACoeffs, LP_BCoeffs, IIR_LPstatesChB, TAPS_IIR);
 
+// FIR #! 22/10/2013
 	*sampleA_ptr = fir(*sampleA_ptr, LP_FIR_coeffs, FIR_LPstatesChA, TAPS_FIR_LP);
 	*sampleB_ptr = fir(*sampleB_ptr, LP_FIR_coeffs, FIR_LPstatesChB, TAPS_FIR_LP);
 
+// BIQUAD #! 22/10/2013
+//	*sampleA_ptr = biquad(*sampleA_ptr, BIQUAD_coeffs, BIQUAD_stateChA, NSECTIONS);
+//	*sampleB_ptr = biquad(*sampleB_ptr, BIQUAD_coeffs, BIQUAD_stateChB, NSECTIONS);
 	
 	return 0;	
 }

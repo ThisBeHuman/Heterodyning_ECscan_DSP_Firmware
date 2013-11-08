@@ -25,6 +25,12 @@
 #define SWEEP_SIGNAL_FREQUENCY 1000
 #define SWEEP_SAMPLES_90DEGREE	(SWEEP_SAMPLE_RATE/SWEEP_SIGNAL_FREQUENCY)/4
 
+
+// Digital Filters 
+#define NSECTIONS 3
+#define NSTATE ((2*NSECTIONS) + 1)
+#define BIQUAD_TAPS 5
+
 #define TAPS_IIR 2
 #define TAPS_FIR 159
 #define TAPS_FIR_LP 283//153
@@ -96,6 +102,12 @@ extern float dm FIR_BPstatesChB[TAPS_FIR];
 extern float pm LP_FIR_coeffs[TAPS_FIR_LP];
 extern float dm FIR_LPstatesChA[TAPS_FIR_LP];
 extern float dm FIR_LPstatesChB[TAPS_FIR_LP];
+
+
+extern float BIQUAD_stateChA[NSTATE];
+extern float BIQUAD_stateChB[NSTATE];
+
+extern float  pm BIQUAD_coeffs[BIQUAD_TAPS*NSECTIONS];
 
 
 

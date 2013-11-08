@@ -96,6 +96,13 @@ float  pm IIR_coeffs[2*TAPS_IIR] =
 
 
 
+float BIQUAD_stateChA[NSTATE];
+float BIQUAD_stateChB[NSTATE];
+float  pm BIQUAD_coeffs[BIQUAD_TAPS*NSECTIONS] =
+{
+	#include "iir_bw_lp100hz.dat"
+};
+
 
 
 

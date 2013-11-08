@@ -426,7 +426,7 @@ void main( void )
 					if (SweepMode == TRUE){
 						
 						// If in sweep mode. Only send last sample of each channel.
-						process_sendSampleData(1,(unsigned int*)&AR_bufferChA[AR_bufferIndex-10],(unsigned int*)&AR_bufferChB[AR_bufferIndex-10]);
+						process_sendSampleData(1,(unsigned int*)&AR_bufferChA[AR_bufferIndex],(unsigned int*)&AR_bufferChB[AR_bufferIndex]);
 					}else{
 						process_sendSampleData(AR_bufferIndex,(unsigned int*)AR_bufferChA,(unsigned int*)AR_bufferChB);
 					}

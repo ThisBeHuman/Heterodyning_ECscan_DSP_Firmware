@@ -105,6 +105,12 @@ int USB_processPayload(unsigned short payload_size, unsigned char * payload_buff
 			
 			processStepperEn(payload_size, payload_buffer);
 			break;
+		case USB_MSG_ADC_SINGLESAMPLE:
+//			printf("payload size:%d\n",payload_size);
+			if(payload_size != USB_MSG_ADC_SINGLESAMPLE_SIZE) return USB_WRONG_CMD_SIZE;
+			
+			processADCSingleSample(payload_size, payload_buffer);
+			break;
 		default:
 			return USB_ERROR_FLAG;
 		
@@ -659,5 +665,39 @@ int processOpMode(unsigned short msg_size, unsigned char * msg_buffer)
 	return TRUE;
 }
 
+
+
+
+/************************************************************
+	Function:	short processADCSingleSample (unsigned short msg_size, unsigned char * msg_buffer)
+	Argument:	unsigned short msg_size - Payload message size for confirmation
+ 				unsigned char * msg_buffer - Payload buffer with message to process
+	Return:		TRUE if message has been processed without errors.
+				USB_ERROR_FLAG if there was an error
+			
+			
+	Description: Acknowledges and sends a Real and Imaginary Sample from
+			the buffer
+		
+	Extra:	
+			
+************************************************************/
+int processADCSingleSample(unsigned short msg_size, unsigned char * msg_buffer)
+{
+	int i;	
+	// Checks if this message corresponds to a Change Frequency command
+	if(msg_size != USB_MSG_ADC_SINGLESAMPLE_SIZE 
+		&& msg_buffer[0] != USB_MSG_ADC_SINGLESAMPLE) {
+			printf("error SingleSample!\n");//#!
+			return USB_WRONG_CMD;
+	}
+	 
+	// Reset calibration variables
+//	printf(" SingleSample! %f %f\n",AR_bufferChA[AR_bufferIndex],AR_bufferChB[AR_bufferIndex]);//#!
+	process_sendAcknowledge(msg_buffer[0]);
+	process_sendSampleData(1,&AR_bufferChA[AR_bufferIndex],&AR_bufferChB[AR_bufferIndex]);
+
+	return TRUE;
+}
 
 

@@ -437,7 +437,7 @@ void ADC_FinishedAR(void)
 	
 	
 	if(AR_continuousSampling){
-		ADC_SwapBuffer();	
+//		ADC_SwapBuffer();	
 		
 //		SIG_LED1_ON;
 		//Init_FIR(AR_bufferIndex);	
@@ -612,7 +612,9 @@ void IRQ_ADC_SampleDone(int sig_int)
 		
 	}
 
-	AR_bufferIndex++;
+
+
+	
 	
 	// If the expected number of samples has been reached.
 	if(AR_bufferIndex==AR_totalSamples){
@@ -624,6 +626,12 @@ void IRQ_ADC_SampleDone(int sig_int)
 	
 		ADC_FinishedAR();
 		
+	}else{
+		if(AR_continuousSampling==FALSE){
+				
+			AR_bufferIndex++;	
+
+		}
 	}
 
 	
