@@ -609,6 +609,10 @@ void IRQ_ADC_SampleDone(int sig_int)
 //		signalIIR_bandpassfilter(&AR_bufferChA[AR_bufferIndex%(MAX_SAMPLES_BUFFER_SIZE)],&AR_bufferChB[AR_bufferIndex%MAX_SAMPLES_BUFFER_SIZE]);
 	}else{
 		AR_bufferChB[AR_bufferIndex%(MAX_SAMPLES_BUFFER_SIZE)] = (((int)sample&0xffff)-CAL_CHA_DECIMAL)*2.5/65536;// - CAL_chA_calibration;
+
+		//signalIIR_lowpassfilter(&AR_bufferChA[AR_bufferIndex%(MAX_SAMPLES_BUFFER_SIZE)], &AR_bufferChB[AR_bufferIndex%(MAX_SAMPLES_BUFFER_SIZE)]);
+		AR_bufferChA[AR_bufferIndex%(MAX_SAMPLES_BUFFER_SIZE)] = 2*AR_bufferChA[AR_bufferIndex%(MAX_SAMPLES_BUFFER_SIZE)];
+		AR_bufferChB[AR_bufferIndex%(MAX_SAMPLES_BUFFER_SIZE)] = 2*AR_bufferChB[AR_bufferIndex%(MAX_SAMPLES_BUFFER_SIZE)];
 		
 	}
 

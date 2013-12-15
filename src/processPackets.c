@@ -111,6 +111,12 @@ int USB_processPayload(unsigned short payload_size, unsigned char * payload_buff
 			
 			processADCSingleSample(payload_size, payload_buffer);
 			break;
+		case USB_MSG_MUX_SET:
+//			printf("payload size:%d\n",payload_size);
+			if(payload_size != USB_MSG_MUX_SET_SIZE) return USB_WRONG_CMD_SIZE;
+			
+			processMUXSet(payload_size, payload_buffer);
+			break;
 		default:
 			return USB_ERROR_FLAG;
 		
@@ -699,5 +705,40 @@ int processADCSingleSample(unsigned short msg_size, unsigned char * msg_buffer)
 
 	return TRUE;
 }
+
+
+/************************************************************
+	Function:	int processMUXSet (unsigned short msg_size, unsigned char * msg_buffer)
+	Argument:	unsigned short msg_size - Payload message size for confirmation
+ 				unsigned char * msg_buffer - Payload buffer with message to process
+	Return:		TRUE if message has been processed without errors.
+				USB_ERROR_FLAG if there was an error
+			
+			
+	Description: Sets the Multiplexer selection value
+		
+	Extra:	
+			byte MuxSelection
+			
+************************************************************/
+int processMUXSet(unsigned short msg_size, unsigned char * msg_buffer)
+{
+	int temp;	
+	// Checks if this message corresponds to a Change Frequency command
+	if(msg_size != USB_MSG_MUX_SET_SIZE 
+		&& msg_buffer[0] != USB_MSG_MUX_SET) {
+			printf("error OpMode EN!\n");//#!
+			return USB_WRONG_CMD;
+	}
+	temp = msg_buffer[1]& 0x0f; // only lowest 4 bits
+	printf("Mux Set %d\n", temp);
+
+	MUX_SetMux(temp);
+	process_sendAcknowledge(msg_buffer[0]);
+
+	return TRUE;
+}
+
+
 
 

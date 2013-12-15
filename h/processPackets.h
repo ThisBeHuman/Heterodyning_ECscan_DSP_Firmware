@@ -32,6 +32,7 @@ int processADCStartSampling(unsigned short msg_size, unsigned char * msg_buffer)
 int processADCStopSampling(unsigned short msg_size, unsigned char * msg_buffer);
 int USB_processPayload(unsigned short payload_size, unsigned char * payload_buffer);
 
+int processMUXSet(unsigned short msg_size, unsigned char * msg_buffer);
 
 
 

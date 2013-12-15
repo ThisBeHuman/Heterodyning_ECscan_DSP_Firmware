@@ -38,65 +38,70 @@ ifeq ($(MAKECMDGOALS),HeterodyningECscanDSPFirmware_Debug)
 
 HeterodyningECscanDSPFirmware_Debug : ./Debug/HeterodyningECscanDSPFirmware.dxe 
 
-./Debug/configADC.doj :src/configADC.c h/configADC.h h/general.h $(VDSP)/214xx/include/Cdef21489.h $(VDSP)/214xx/include/def21489.h $(VDSP)/214xx/include/stdio.h $(VDSP)/214xx/include/stdio_21xxx.h $(VDSP)/214xx/include/stdbool.h $(VDSP)/214xx/include/yvals.h $(VDSP)/214xx/include/sysreg.h $(VDSP)/214xx/include/signal.h $(VDSP)/214xx/include/sru.h $(VDSP)/214xx/include/sru21489.h $(VDSP)/214xx/include/math.h $(VDSP)/214xx/include/math_21xxx.h $(VDSP)/214xx/include/filters.h h/processSignal.h h/configDDS.h h/configUSB.h h/configXY.h h/processPackets.h h/global_variables.h 
+Debug/configADC.doj :src/configADC.c h/configADC.h h/general.h $(VDSP)/214xx/include/Cdef21489.h $(VDSP)/214xx/include/def21489.h $(VDSP)/214xx/include/stdio.h $(VDSP)/214xx/include/stdio_21xxx.h $(VDSP)/214xx/include/stdbool.h $(VDSP)/214xx/include/yvals.h $(VDSP)/214xx/include/sysreg.h $(VDSP)/214xx/include/signal.h $(VDSP)/214xx/include/sru.h $(VDSP)/214xx/include/sru21489.h $(VDSP)/214xx/include/math.h $(VDSP)/214xx/include/math_21xxx.h $(VDSP)/214xx/include/filters.h h/processSignal.h h/configDDS.h h/configUSB.h h/configXY.h h/processPackets.h h/global_variables.h 
 	@echo ".\src\configADC.c"
 	$(VDSP)/cc21k.exe -c .\src\configADC.c -file-attr ProjectName=HeterodyningECscanDSPFirmware -g -structs-do-not-overlap -no-multiline -double-size-32 -swc -warn-protos -si-revision 0.2 -proc ADSP-21489 -o .\Debug\configADC.doj -MM
 
-./Debug/configDDS.doj :src/configDDS.c h/configDDS.h h/general.h $(VDSP)/214xx/include/Cdef21489.h $(VDSP)/214xx/include/def21489.h $(VDSP)/214xx/include/stdio.h $(VDSP)/214xx/include/stdio_21xxx.h $(VDSP)/214xx/include/stdbool.h $(VDSP)/214xx/include/yvals.h $(VDSP)/214xx/include/sysreg.h $(VDSP)/214xx/include/signal.h $(VDSP)/214xx/include/sru.h $(VDSP)/214xx/include/sru21489.h $(VDSP)/214xx/include/math.h $(VDSP)/214xx/include/math_21xxx.h $(VDSP)/214xx/include/filters.h h/processSignal.h h/configADC.h h/configUSB.h h/configXY.h h/processPackets.h h/global_variables.h 
+Debug/configDDS.doj :src/configDDS.c h/configDDS.h h/general.h $(VDSP)/214xx/include/Cdef21489.h $(VDSP)/214xx/include/def21489.h $(VDSP)/214xx/include/stdio.h $(VDSP)/214xx/include/stdio_21xxx.h $(VDSP)/214xx/include/stdbool.h $(VDSP)/214xx/include/yvals.h $(VDSP)/214xx/include/sysreg.h $(VDSP)/214xx/include/signal.h $(VDSP)/214xx/include/sru.h $(VDSP)/214xx/include/sru21489.h $(VDSP)/214xx/include/math.h $(VDSP)/214xx/include/math_21xxx.h $(VDSP)/214xx/include/filters.h h/processSignal.h h/configADC.h h/configUSB.h h/configXY.h h/processPackets.h h/global_variables.h 
 	@echo ".\src\configDDS.c"
 	$(VDSP)/cc21k.exe -c .\src\configDDS.c -file-attr ProjectName=HeterodyningECscanDSPFirmware -g -structs-do-not-overlap -no-multiline -double-size-32 -swc -warn-protos -si-revision 0.2 -proc ADSP-21489 -o .\Debug\configDDS.doj -MM
 
-./Debug/configUSB.doj :src/configUSB.c h/configUSB.h h/general.h $(VDSP)/214xx/include/Cdef21489.h $(VDSP)/214xx/include/def21489.h $(VDSP)/214xx/include/stdio.h $(VDSP)/214xx/include/stdio_21xxx.h $(VDSP)/214xx/include/stdbool.h $(VDSP)/214xx/include/yvals.h $(VDSP)/214xx/include/sysreg.h $(VDSP)/214xx/include/signal.h $(VDSP)/214xx/include/sru.h $(VDSP)/214xx/include/sru21489.h $(VDSP)/214xx/include/math.h $(VDSP)/214xx/include/math_21xxx.h $(VDSP)/214xx/include/filters.h h/processSignal.h h/configADC.h h/configDDS.h h/configXY.h h/processPackets.h h/global_variables.h 
+Debug/configMUX.doj :src/configMUX.c h/configMUX.h h/general.h $(VDSP)/214xx/include/Cdef21489.h $(VDSP)/214xx/include/def21489.h $(VDSP)/214xx/include/stdio.h $(VDSP)/214xx/include/stdio_21xxx.h $(VDSP)/214xx/include/stdbool.h $(VDSP)/214xx/include/yvals.h $(VDSP)/214xx/include/sysreg.h $(VDSP)/214xx/include/signal.h $(VDSP)/214xx/include/sru.h $(VDSP)/214xx/include/sru21489.h $(VDSP)/214xx/include/math.h $(VDSP)/214xx/include/math_21xxx.h $(VDSP)/214xx/include/filters.h h/processSignal.h h/configADC.h h/configDDS.h h/configUSB.h h/configXY.h h/processPackets.h h/global_variables.h 
+	@echo ".\src\configMUX.c"
+	$(VDSP)/cc21k.exe -c .\src\configMUX.c -file-attr ProjectName=HeterodyningECscanDSPFirmware -g -structs-do-not-overlap -no-multiline -double-size-32 -swc -warn-protos -si-revision 0.2 -proc ADSP-21489 -o .\Debug\configMUX.doj -MM
+
+Debug/configUSB.doj :src/configUSB.c h/configUSB.h h/general.h $(VDSP)/214xx/include/Cdef21489.h $(VDSP)/214xx/include/def21489.h $(VDSP)/214xx/include/stdio.h $(VDSP)/214xx/include/stdio_21xxx.h $(VDSP)/214xx/include/stdbool.h $(VDSP)/214xx/include/yvals.h $(VDSP)/214xx/include/sysreg.h $(VDSP)/214xx/include/signal.h $(VDSP)/214xx/include/sru.h $(VDSP)/214xx/include/sru21489.h $(VDSP)/214xx/include/math.h $(VDSP)/214xx/include/math_21xxx.h $(VDSP)/214xx/include/filters.h h/processSignal.h h/configADC.h h/configDDS.h h/configXY.h h/processPackets.h h/global_variables.h 
 	@echo ".\src\configUSB.c"
 	$(VDSP)/cc21k.exe -c .\src\configUSB.c -file-attr ProjectName=HeterodyningECscanDSPFirmware -g -structs-do-not-overlap -no-multiline -double-size-32 -swc -warn-protos -si-revision 0.2 -proc ADSP-21489 -o .\Debug\configUSB.doj -MM
 
-./Debug/configXY.doj :src/configXY.c h/configXY.h h/general.h $(VDSP)/214xx/include/Cdef21489.h $(VDSP)/214xx/include/def21489.h $(VDSP)/214xx/include/stdio.h $(VDSP)/214xx/include/stdio_21xxx.h $(VDSP)/214xx/include/stdbool.h $(VDSP)/214xx/include/yvals.h $(VDSP)/214xx/include/sysreg.h $(VDSP)/214xx/include/signal.h $(VDSP)/214xx/include/sru.h $(VDSP)/214xx/include/sru21489.h $(VDSP)/214xx/include/math.h $(VDSP)/214xx/include/math_21xxx.h $(VDSP)/214xx/include/filters.h h/processSignal.h h/configADC.h h/configDDS.h h/configUSB.h h/processPackets.h h/global_variables.h 
+Debug/configXY.doj :src/configXY.c h/configXY.h h/general.h $(VDSP)/214xx/include/Cdef21489.h $(VDSP)/214xx/include/def21489.h $(VDSP)/214xx/include/stdio.h $(VDSP)/214xx/include/stdio_21xxx.h $(VDSP)/214xx/include/stdbool.h $(VDSP)/214xx/include/yvals.h $(VDSP)/214xx/include/sysreg.h $(VDSP)/214xx/include/signal.h $(VDSP)/214xx/include/sru.h $(VDSP)/214xx/include/sru21489.h $(VDSP)/214xx/include/math.h $(VDSP)/214xx/include/math_21xxx.h $(VDSP)/214xx/include/filters.h h/processSignal.h h/configADC.h h/configDDS.h h/configUSB.h h/processPackets.h h/global_variables.h 
 	@echo ".\src\configXY.c"
 	$(VDSP)/cc21k.exe -c .\src\configXY.c -file-attr ProjectName=HeterodyningECscanDSPFirmware -g -structs-do-not-overlap -no-multiline -double-size-32 -swc -warn-protos -si-revision 0.2 -proc ADSP-21489 -o .\Debug\configXY.doj -MM
 
-./Debug/executeNDT.doj :src/executeNDT.c h/executeNDT.h h/general.h $(VDSP)/214xx/include/Cdef21489.h $(VDSP)/214xx/include/def21489.h $(VDSP)/214xx/include/stdio.h $(VDSP)/214xx/include/stdio_21xxx.h $(VDSP)/214xx/include/stdbool.h $(VDSP)/214xx/include/yvals.h $(VDSP)/214xx/include/sysreg.h $(VDSP)/214xx/include/signal.h $(VDSP)/214xx/include/sru.h $(VDSP)/214xx/include/sru21489.h $(VDSP)/214xx/include/math.h $(VDSP)/214xx/include/math_21xxx.h $(VDSP)/214xx/include/filters.h h/processSignal.h h/configADC.h h/configDDS.h h/configUSB.h h/configXY.h h/processPackets.h h/global_variables.h 
+Debug/executeNDT.doj :src/executeNDT.c h/executeNDT.h h/general.h $(VDSP)/214xx/include/Cdef21489.h $(VDSP)/214xx/include/def21489.h $(VDSP)/214xx/include/stdio.h $(VDSP)/214xx/include/stdio_21xxx.h $(VDSP)/214xx/include/stdbool.h $(VDSP)/214xx/include/yvals.h $(VDSP)/214xx/include/sysreg.h $(VDSP)/214xx/include/signal.h $(VDSP)/214xx/include/sru.h $(VDSP)/214xx/include/sru21489.h $(VDSP)/214xx/include/math.h $(VDSP)/214xx/include/math_21xxx.h $(VDSP)/214xx/include/filters.h h/processSignal.h h/configADC.h h/configDDS.h h/configUSB.h h/configXY.h h/processPackets.h h/global_variables.h 
 	@echo ".\src\executeNDT.c"
 	$(VDSP)/cc21k.exe -c .\src\executeNDT.c -file-attr ProjectName=HeterodyningECscanDSPFirmware -g -structs-do-not-overlap -no-multiline -double-size-32 -swc -warn-protos -si-revision 0.2 -proc ADSP-21489 -o .\Debug\executeNDT.doj -MM
 
-./Debug/global_variables.doj :src/global_variables.c h/global_variables.h h/general.h $(VDSP)/214xx/include/Cdef21489.h $(VDSP)/214xx/include/def21489.h $(VDSP)/214xx/include/stdio.h $(VDSP)/214xx/include/stdio_21xxx.h $(VDSP)/214xx/include/stdbool.h $(VDSP)/214xx/include/yvals.h $(VDSP)/214xx/include/sysreg.h $(VDSP)/214xx/include/signal.h $(VDSP)/214xx/include/sru.h $(VDSP)/214xx/include/sru21489.h $(VDSP)/214xx/include/math.h $(VDSP)/214xx/include/math_21xxx.h $(VDSP)/214xx/include/filters.h h/processSignal.h h/configADC.h h/configDDS.h h/configUSB.h h/configXY.h h/processPackets.h iir_bp1khz_acoeffs.dat iir_bp1khz_bcoeffs.dat iir_lp1hz_acoeffs.dat iir_lp1hz_bcoeffs.dat fir_coeff.dat fir_coeff_LP.dat iir_coeffs.dat iir_bw_lp100hz.dat fir_coeff1s.dat iir_coeff.dat sine4096.txt 
+Debug/global_variables.doj :src/global_variables.c h/global_variables.h h/general.h $(VDSP)/214xx/include/Cdef21489.h $(VDSP)/214xx/include/def21489.h $(VDSP)/214xx/include/stdio.h $(VDSP)/214xx/include/stdio_21xxx.h $(VDSP)/214xx/include/stdbool.h $(VDSP)/214xx/include/yvals.h $(VDSP)/214xx/include/sysreg.h $(VDSP)/214xx/include/signal.h $(VDSP)/214xx/include/sru.h $(VDSP)/214xx/include/sru21489.h $(VDSP)/214xx/include/math.h $(VDSP)/214xx/include/math_21xxx.h $(VDSP)/214xx/include/filters.h h/processSignal.h h/configADC.h h/configDDS.h h/configUSB.h h/configXY.h h/processPackets.h iir_bp1khz_acoeffs.dat iir_bp1khz_bcoeffs.dat iir_lp1hz_acoeffs.dat iir_lp1hz_bcoeffs.dat fir_coeff.dat fir_coeff_LP.dat iir_coeffs.dat iir_bw_lp100hz.dat fir_coeff1s.dat iir_coeff.dat sine4096.txt 
 	@echo ".\src\global_variables.c"
 	$(VDSP)/cc21k.exe -c .\src\global_variables.c -file-attr ProjectName=HeterodyningECscanDSPFirmware -g -structs-do-not-overlap -no-multiline -double-size-32 -swc -warn-protos -si-revision 0.2 -proc ADSP-21489 -o .\Debug\global_variables.doj -MM
 
-./Debug/Heterodyning\ ECscan\ DSP\ Firmware.doj :Heterodyning\ ECscan\ DSP\ Firmware.c h/general.h $(VDSP)/214xx/include/Cdef21489.h $(VDSP)/214xx/include/def21489.h $(VDSP)/214xx/include/stdio.h $(VDSP)/214xx/include/stdio_21xxx.h $(VDSP)/214xx/include/stdbool.h $(VDSP)/214xx/include/yvals.h $(VDSP)/214xx/include/sysreg.h $(VDSP)/214xx/include/signal.h $(VDSP)/214xx/include/sru.h $(VDSP)/214xx/include/sru21489.h $(VDSP)/214xx/include/math.h $(VDSP)/214xx/include/math_21xxx.h $(VDSP)/214xx/include/filters.h h/processSignal.h h/configADC.h h/configDDS.h h/configUSB.h h/configXY.h h/processPackets.h h/global_variables.h 
+Debug/Heterodyning\ ECscan\ DSP\ Firmware.doj :Heterodyning\ ECscan\ DSP\ Firmware.c h/general.h $(VDSP)/214xx/include/Cdef21489.h $(VDSP)/214xx/include/def21489.h $(VDSP)/214xx/include/stdio.h $(VDSP)/214xx/include/stdio_21xxx.h $(VDSP)/214xx/include/stdbool.h $(VDSP)/214xx/include/yvals.h $(VDSP)/214xx/include/sysreg.h $(VDSP)/214xx/include/signal.h $(VDSP)/214xx/include/sru.h $(VDSP)/214xx/include/sru21489.h $(VDSP)/214xx/include/math.h $(VDSP)/214xx/include/math_21xxx.h $(VDSP)/214xx/include/filters.h h/processSignal.h h/configADC.h h/configDDS.h h/configUSB.h h/configXY.h h/processPackets.h h/global_variables.h 
 	@echo ".\Heterodyning ECscan DSP Firmware.c"
 	$(VDSP)/cc21k.exe -c .\Heterodyning\ ECscan\ DSP\ Firmware.c -file-attr ProjectName=HeterodyningECscanDSPFirmware -g -structs-do-not-overlap -no-multiline -double-size-32 -swc -warn-protos -si-revision 0.2 -proc ADSP-21489 -o .\Debug\Heterodyning\ ECscan\ DSP\ Firmware.doj -MM
 
-./Debug/initPLL_SDRAM.doj :src/initPLL_SDRAM.c $(VDSP)/214xx/include/def21489.h $(VDSP)/214xx/include/cdef21489.h 
+Debug/initPLL_SDRAM.doj :src/initPLL_SDRAM.c $(VDSP)/214xx/include/def21489.h $(VDSP)/214xx/include/cdef21489.h 
 	@echo ".\src\initPLL_SDRAM.c"
 	$(VDSP)/cc21k.exe -c .\src\initPLL_SDRAM.c -file-attr ProjectName=HeterodyningECscanDSPFirmware -g -structs-do-not-overlap -no-multiline -double-size-32 -swc -warn-protos -si-revision 0.2 -proc ADSP-21489 -o .\Debug\initPLL_SDRAM.doj -MM
 
-./Debug/processPackets.doj :src/processPackets.c h/processPackets.h h/general.h $(VDSP)/214xx/include/Cdef21489.h $(VDSP)/214xx/include/def21489.h $(VDSP)/214xx/include/stdio.h $(VDSP)/214xx/include/stdio_21xxx.h $(VDSP)/214xx/include/stdbool.h $(VDSP)/214xx/include/yvals.h $(VDSP)/214xx/include/sysreg.h $(VDSP)/214xx/include/signal.h $(VDSP)/214xx/include/sru.h $(VDSP)/214xx/include/sru21489.h $(VDSP)/214xx/include/math.h $(VDSP)/214xx/include/math_21xxx.h $(VDSP)/214xx/include/filters.h h/processSignal.h h/configADC.h h/configDDS.h h/configUSB.h h/configXY.h h/global_variables.h 
+Debug/processPackets.doj :src/processPackets.c h/processPackets.h h/general.h $(VDSP)/214xx/include/Cdef21489.h $(VDSP)/214xx/include/def21489.h $(VDSP)/214xx/include/stdio.h $(VDSP)/214xx/include/stdio_21xxx.h $(VDSP)/214xx/include/stdbool.h $(VDSP)/214xx/include/yvals.h $(VDSP)/214xx/include/sysreg.h $(VDSP)/214xx/include/signal.h $(VDSP)/214xx/include/sru.h $(VDSP)/214xx/include/sru21489.h $(VDSP)/214xx/include/math.h $(VDSP)/214xx/include/math_21xxx.h $(VDSP)/214xx/include/filters.h h/processSignal.h h/configADC.h h/configDDS.h h/configUSB.h h/configXY.h h/global_variables.h 
 	@echo ".\src\processPackets.c"
 	$(VDSP)/cc21k.exe -c .\src\processPackets.c -file-attr ProjectName=HeterodyningECscanDSPFirmware -g -structs-do-not-overlap -no-multiline -double-size-32 -swc -warn-protos -si-revision 0.2 -proc ADSP-21489 -o .\Debug\processPackets.doj -MM
 
-./Debug/processSignal.doj :src/processSignal.c h/processSignal.h h/general.h $(VDSP)/214xx/include/Cdef21489.h $(VDSP)/214xx/include/def21489.h $(VDSP)/214xx/include/stdio.h $(VDSP)/214xx/include/stdio_21xxx.h $(VDSP)/214xx/include/stdbool.h $(VDSP)/214xx/include/yvals.h $(VDSP)/214xx/include/sysreg.h $(VDSP)/214xx/include/signal.h $(VDSP)/214xx/include/sru.h $(VDSP)/214xx/include/sru21489.h $(VDSP)/214xx/include/math.h $(VDSP)/214xx/include/math_21xxx.h $(VDSP)/214xx/include/filters.h h/configADC.h h/configDDS.h h/configUSB.h h/configXY.h h/processPackets.h h/global_variables.h 
+Debug/processSignal.doj :src/processSignal.c h/processSignal.h h/general.h $(VDSP)/214xx/include/Cdef21489.h $(VDSP)/214xx/include/def21489.h $(VDSP)/214xx/include/stdio.h $(VDSP)/214xx/include/stdio_21xxx.h $(VDSP)/214xx/include/stdbool.h $(VDSP)/214xx/include/yvals.h $(VDSP)/214xx/include/sysreg.h $(VDSP)/214xx/include/signal.h $(VDSP)/214xx/include/sru.h $(VDSP)/214xx/include/sru21489.h $(VDSP)/214xx/include/math.h $(VDSP)/214xx/include/math_21xxx.h $(VDSP)/214xx/include/filters.h h/configADC.h h/configDDS.h h/configUSB.h h/configXY.h h/processPackets.h h/global_variables.h 
 	@echo ".\src\processSignal.c"
 	$(VDSP)/cc21k.exe -c .\src\processSignal.c -file-attr ProjectName=HeterodyningECscanDSPFirmware -g -structs-do-not-overlap -no-multiline -double-size-32 -swc -warn-protos -si-revision 0.2 -proc ADSP-21489 -o .\Debug\processSignal.doj -MM
 
-./Debug/HeterodyningECscanDSPFirmware.dxe :./Heterodyning\ ECscan\ DSP\ Firmware.ldf $(VDSP)/214xx/lib/21479_rev_any/21489_hdr.doj ./Debug/configADC.doj ./Debug/configDDS.doj ./Debug/configUSB.doj ./Debug/configXY.doj ./Debug/executeNDT.doj ./Debug/global_variables.doj ./Debug/Heterodyning\ ECscan\ DSP\ Firmware.doj ./Debug/initPLL_SDRAM.doj ./Debug/processPackets.doj ./Debug/processSignal.doj $(VDSP)/214xx/lib/21479_rev_any/libc.dlb $(VDSP)/214xx/lib/21479_rev_any/libio.dlb $(VDSP)/214xx/lib/21479_rev_any/libcpp.dlb $(VDSP)/214xx/lib/21479_rev_any/libdsp.dlb 
+./Debug/HeterodyningECscanDSPFirmware.dxe :./Heterodyning\ ECscan\ DSP\ Firmware.ldf $(VDSP)/214xx/lib/21479_rev_any/21489_hdr.doj ./Debug/configADC.doj ./Debug/configDDS.doj ./Debug/configUSB.doj ./Debug/configXY.doj ./Debug/executeNDT.doj ./Debug/global_variables.doj ./Debug/Heterodyning\ ECscan\ DSP\ Firmware.doj ./Debug/initPLL_SDRAM.doj ./Debug/processPackets.doj ./Debug/processSignal.doj ./Debug/configMUX.doj $(VDSP)/214xx/lib/21479_rev_any/libc.dlb $(VDSP)/214xx/lib/21479_rev_any/libio.dlb $(VDSP)/214xx/lib/21479_rev_any/libcpp.dlb $(VDSP)/214xx/lib/21479_rev_any/libdsp.dlb 
 	@echo "Linking..."
-	$(VDSP)/cc21k.exe .\Debug\configADC.doj .\Debug\configDDS.doj .\Debug\configUSB.doj .\Debug\configXY.doj .\Debug\executeNDT.doj .\Debug\global_variables.doj .\Debug\Heterodyning\ ECscan\ DSP\ Firmware.doj .\Debug\initPLL_SDRAM.doj .\Debug\processPackets.doj .\Debug\processSignal.doj -T .\Heterodyning\ ECscan\ DSP\ Firmware.ldf -flags-link -ip -L .\Debug -add-debug-libpaths -swc -flags-link -od,.\Debug -o .\Debug\HeterodyningECscanDSPFirmware.dxe -proc ADSP-21489 -si-revision 0.2 -flags-link -MM
+	$(VDSP)/cc21k.exe .\Debug\configADC.doj .\Debug\configDDS.doj .\Debug\configMUX.doj .\Debug\configUSB.doj .\Debug\configXY.doj .\Debug\executeNDT.doj .\Debug\global_variables.doj .\Debug\Heterodyning\ ECscan\ DSP\ Firmware.doj .\Debug\initPLL_SDRAM.doj .\Debug\processPackets.doj .\Debug\processSignal.doj -T .\Heterodyning\ ECscan\ DSP\ Firmware.ldf -flags-link -ip -L .\Debug -add-debug-libpaths -swc -flags-link -od,.\Debug -o .\Debug\HeterodyningECscanDSPFirmware.dxe -proc ADSP-21489 -si-revision 0.2 -flags-link -MM
 
 endif
 
 ifeq ($(MAKECMDGOALS),HeterodyningECscanDSPFirmware_Debug_clean)
 
 HeterodyningECscanDSPFirmware_Debug_clean:
-	-$(RM) ".\Debug\configADC.doj"
-	-$(RM) ".\Debug\configDDS.doj"
-	-$(RM) ".\Debug\configUSB.doj"
-	-$(RM) ".\Debug\configXY.doj"
-	-$(RM) ".\Debug\executeNDT.doj"
-	-$(RM) ".\Debug\global_variables.doj"
-	-$(RM) ".\Debug\Heterodyning ECscan DSP Firmware.doj"
-	-$(RM) ".\Debug\initPLL_SDRAM.doj"
-	-$(RM) ".\Debug\processPackets.doj"
-	-$(RM) ".\Debug\processSignal.doj"
+	-$(RM) "Debug\configADC.doj"
+	-$(RM) "Debug\configDDS.doj"
+	-$(RM) "Debug\configMUX.doj"
+	-$(RM) "Debug\configUSB.doj"
+	-$(RM) "Debug\configXY.doj"
+	-$(RM) "Debug\executeNDT.doj"
+	-$(RM) "Debug\global_variables.doj"
+	-$(RM) "Debug\Heterodyning ECscan DSP Firmware.doj"
+	-$(RM) "Debug\initPLL_SDRAM.doj"
+	-$(RM) "Debug\processPackets.doj"
+	-$(RM) "Debug\processSignal.doj"
 	-$(RM) ".\Debug\HeterodyningECscanDSPFirmware.dxe"
 	-$(RM) ".\Debug\*.ipa"
 	-$(RM) ".\Debug\*.opa"

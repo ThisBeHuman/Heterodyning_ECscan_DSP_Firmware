@@ -235,7 +235,9 @@ void main( void )
 	InitGAIN_IO();
 	InitADC_IO();
 	InitUSB_IO();
-	InitXY_IO();
+	//InitXY_IO();
+	
+	InitMUX_IO();
 	
 	// #! PCGD
 /*
@@ -266,12 +268,16 @@ void main( void )
 	USB_init();
 	//Setup_AMI();
 	
+	
+/* Disabled for MUX testing 	
 	X_init(MODE_FULL_STEP, MODE_CW);
 	Y_init(MODE_FULL_STEP, MODE_CW);
 	
 	XY_timer_init();
+	XY_MOTION_ENABLE;
 	
-	
+*/ 
+
 	// DRIVER DISABLE OUTPUT
 	DRIVER_DISABLE;
 	SRU(HIGH,PBEN03_I);
